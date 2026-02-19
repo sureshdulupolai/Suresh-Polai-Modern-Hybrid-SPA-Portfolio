@@ -34,7 +34,5 @@ This project follows a **Hybrid Single Page Application (SPA)** architecture —
 - GSAP
 - Google Fonts (Outfit)
 
----
 
-## 📂 Project Structure
 
