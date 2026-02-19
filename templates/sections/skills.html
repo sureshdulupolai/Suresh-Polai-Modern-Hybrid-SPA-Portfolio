@@ -1,0 +1,55 @@
+<section id="skills" class="min-h-screen py-24 relative">
+    <div class="container mx-auto px-6">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 dark:text-white animate-fade-in-up">Technical
+            Arsenal</h2>
+
+        <div class="grid md:grid-cols-2 gap-8 lg:gap-12">
+            {% for category, skill_list in categories.items %}
+            <div class="glass p-8 rounded-3xl animate-fade-in-up hover:border-primary/30 transition-colors duration-500"
+                style="animation-delay: {{ forloop.counter0 }}00ms;">
+                <div class="flex items-center mb-8">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white shadow-lg mr-4">
+                        <!-- Icon based on category (Simple mapping) -->
+                        <span class="text-xl font-bold">{{ category|slice:":1" }}</span>
+                    </div>
+                    <h3 class="text-2xl font-bold dark:text-white capitalize">{{ category }}</h3>
+                </div>
+
+                <div class="space-y-6">
+                    {% for skill in skill_list %}
+                    <div class="group">
+                        <div class="flex justify-between mb-2">
+                            <span class="font-medium dark:text-gray-200 group-hover:text-primary transition-colors">{{
+                                skill.name }}</span>
+                            <span class="text-sm text-gray-500">{{ skill.proficiency_percentage }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                            <div class="skill-progress bg-gradient-to-r from-primary to-secondary h-full rounded-full w-0 transition-all duration-1000 ease-out"
+                                data-width="{{ skill.proficiency_percentage }}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script>
+    // Trigger progress animations when in view
+    setTimeout(() => {
+        const progressBars = document.querySelectorAll('.skill-progress');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const width = entry.target.getAttribute('data-width');
+                    entry.target.style.width = width;
+                }
+            });
+        }, { threshold: 0.1 });
+
+        progressBars.forEach(bar => observer.observe(bar));
+    }, 100); // Small delay to ensure DOM is ready if loaded via SPA
+</script>

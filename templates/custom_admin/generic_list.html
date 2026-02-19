@@ -1,0 +1,51 @@
+{% extends 'custom_admin/base_admin.html' %}
+
+{% block title %}Manage {{ model_name_plural }}{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-lg shadow">
+    <div class="px-6 py-4 border-b flex justify-between items-center">
+        <h3 class="font-bold text-gray-800">All {{ model_name_plural }}</h3>
+        <a href="{{ add_url }}"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors text-sm">
+            + Add New
+        </a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr>
+                    <th class="py-3 px-6 bg-gray-50 font-semibold text-gray-600 text-sm uppercase border-b">Item</th>
+                    <th class="py-3 px-6 bg-gray-50 font-semibold text-gray-600 text-sm uppercase border-b text-right">
+                        Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr class="border-b last:border-0 hover:bg-gray-50 transition-colors">
+                    <td class="py-4 px-6 font-medium text-gray-800">{{ item }}</td>
+                    <td class="py-4 px-6 text-right space-x-2">
+                        <a href="{{ item.edit_url }}"
+                            class="text-blue-600 hover:text-blue-800 font-medium text-sm">Edit</a>
+
+                        <form id="delete-item-{{ item.item.pk }}" action="{{ item.delete_url }}" method="POST"
+                            class="inline">
+                            {% csrf_token %}
+                            <button type="button"
+                                onclick="window.confirmFormSubmit('delete-item-{{ item.item.pk }}', 'Delete this item permanently?')"
+                                class="text-red-600 hover:text-red-800 font-medium text-sm">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-center py-8 text-gray-500">No records found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="spa-container">
+    {% if active_section == 'home' %}
+    {% include 'sections/hero.html' %}
+    {% elif active_section == 'about' %}
+    {% include 'sections/about.html' %}
+    {% elif active_section == 'projects' %}
+    {% include 'sections/projects.html' %}
+    {% elif active_section == 'contact' %}
+    {% include 'sections/contact.html' %}
+    {% elif active_section == 'resume' %}
+    {% include 'sections/resume.html' %}
+    {% else %}
+    {% include 'sections/hero.html' %}
+    {% endif %}
+</div>
+{% endblock %}

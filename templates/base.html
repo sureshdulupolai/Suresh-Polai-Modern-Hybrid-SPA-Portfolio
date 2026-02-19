@@ -1,0 +1,528 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suresh Polai - Full Stack Developer</title>
+
+    <!-- Google Fonts: Outfit for modern, geometric look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Three.js & GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3b82f6', // Bright Blue
+                        secondary: '#8b5cf6', // Violet
+                        accent: '#06b6d4', // Cyan
+                        dark: '#030712', // Very dark blue/black
+                        'card-dark': 'rgba(17, 24, 39, 0.7)',
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(30px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '1' },
+                            '50%': { opacity: '.5' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            /* Smooth background transition */
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Glassmorphism Classes */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .glass {
+            background: rgba(17, 24, 39, 0.6);
+            /* Gray 900 with opacity */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Nav specific glass */
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dark .nav-glass {
+            background: rgba(3, 7, 18, 0.8);
+            /* Darker */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Three.js Canvas Container */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            /* opacity: 0.6; in light mode, maybe different in dark */
+            pointer-events: none;
+        }
+
+        /* Animated gradient background fallback */
+        .animated-bg {
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gray-50 dark:bg-dark text-gray-800 dark:text-gray-200 font-sans selection:bg-primary selection:text-white">
+
+    <!-- 3D Background Canvas -->
+    <div id="canvas-container"></div>
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 pointer-events-auto">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" data-link class="text-2xl font-bold tracking-tighter hover:scale-105 transition-transform">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Suresh</span>
+                <span class="text-gray-700 dark:text-white">Polai.</span>
+            </a>
+
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="/" data-link class="text-sm font-medium hover:text-primary transition-colors relative group">
+                    Home
+                    <span
+                        class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="/about" data-link
+                    class="text-sm font-medium hover:text-primary transition-colors relative group">
+                    About
+                    <span
+                        class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="/projects" data-link
+                    class="text-sm font-medium hover:text-primary transition-colors relative group">
+                    Projects
+                    <span
+                        class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="/resume" data-link
+                    class="text-sm font-medium hover:text-primary transition-colors relative group">
+                    Resume
+                    <span
+                        class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="/contact" data-link
+                    class="px-5 py-2 bg-primary/10 text-primary rounded-full hover:bg-primary hover:text-white transition-all duration-300 text-sm font-semibold">
+                    Contact
+                </a>
+            </div>
+
+            <!-- Mobile Menu & Theme Toggle -->
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle"
+                    class="p-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors focus:outline-none">
+                    <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                        </path>
+                    </svg>
+                    <svg id="moon-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                        </path>
+                    </svg>
+                </button>
+
+                <!-- Mobile Hamburger -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-700 dark:text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu (Premium Dropdown Card) -->
+        <!-- Overlay for click-to-close -->
+        <div id="mobile-menu-overlay"
+            class="hidden md:hidden fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-opacity duration-300 opacity-0">
+        </div>
+
+        <div id="mobile-menu"
+            class="hidden md:hidden absolute top-20 right-6 w-64 z-50 bg-white/90 dark:bg-dark/95 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl transition-all duration-300 opacity-0 transform scale-95 origin-top-right overflow-hidden">
+            <div class="flex flex-col py-4">
+                <a href="/"
+                    class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0">Home</a>
+                <a href="/about"
+                    class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
+                    style="transition-delay: 50ms;">About</a>
+                <a href="/projects"
+                    class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
+                    style="transition-delay: 100ms;">Projects</a>
+                <a href="/resume"
+                    class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
+                    style="transition-delay: 150ms;">Resume</a>
+                <a href="/contact"
+                    class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
+                    style="transition-delay: 200ms;">Contact</a>
+
+                {% if user.is_authenticated and user.is_superuser %}
+                <div class="h-px bg-gray-200 dark:bg-gray-700 mx-6 my-2 mobile-link transform translate-x-4 opacity-0"
+                    style="transition-delay: 250ms;"></div>
+                <a href="{% url 'dashboard' %}"
+                    class="mobile-link px-6 py-3 text-lg font-bold text-primary hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
+                    style="transition-delay: 300ms;">
+                    Admin Panel
+                </a>
+                <a href="{% url 'admin_logout' %}"
+                    class="mobile-link px-6 py-3 text-base font-medium text-red-500 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
+                    style="transition-delay: 350ms;">
+                    Logout
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content" class="pt-20 min-h-screen relative z-10">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% include 'components/alert_modal.html' %}
+
+    <!-- Premium Footer -->
+    <footer
+        class="mt-32 relative z-10 bg-white/80 dark:bg-dark/90 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 transition-colors duration-300">
+        <div class="container mx-auto px-6 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <!-- Column 1: Brand -->
+                <div class="col-span-1 md:col-span-1">
+                    <a href="/" data-link class="text-3xl font-bold tracking-tighter">
+                        <span
+                            class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Suresh</span>
+                        <span class="text-gray-800 dark:text-white">Polai.</span>
+                    </a>
+                    <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                        Building digital products, brands, and experiences with a passion for clean code and modern
+                        design.
+                    </p>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div>
+                    <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Explore</h4>
+                    <ul class="space-y-3">
+                        <li><a href="/" data-link
+                                class="text-gray-500 hover:text-primary transition-colors text-sm">Home</a></li>
+                        <li><a href="/about" data-link
+                                class="text-gray-500 hover:text-primary transition-colors text-sm">About Me</a></li>
+                        <li><a href="/projects" data-link
+                                class="text-gray-500 hover:text-primary transition-colors text-sm">Projects</a></li>
+                        <li><a href="/contact" data-link
+                                class="text-gray-500 hover:text-primary transition-colors text-sm">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Socials -->
+                <div>
+                    <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Connect</h4>
+                    <ul class="space-y-3">
+                        <li><a href="#"
+                                class="text-gray-500 hover:text-primary transition-colors text-sm flex items-center"><span
+                                    class="w-2 h-2 rounded-full bg-blue-500 mr-2"></span> LinkedIn</a></li>
+                        <li><a href="#"
+                                class="text-gray-500 hover:text-primary transition-colors text-sm flex items-center"><span
+                                    class="w-2 h-2 rounded-full bg-gray-800 dark:bg-white mr-2"></span> GitHub</a></li>
+                        <li><a href="#"
+                                class="text-gray-500 hover:text-primary transition-colors text-sm flex items-center"><span
+                                    class="w-2 h-2 rounded-full bg-blue-400 mr-2"></span> Twitter</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Newsletter/Contact -->
+                <div>
+                    <h4 class="text-lg font-bold text-gray-800 dark:text-white mb-6">Get in Touch</h4>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">
+                        Have a project? I'm available for freelance work.
+                    </p>
+                    <a href="mailto:sureshpolai63@gmail.com"
+                        class="text-primary font-medium hover:underline">sureshpolai63@gmail.com</a>
+                </div>
+            </div>
+
+            <div
+                class="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 text-xs text-center md:text-left">
+                    &copy; {% now "Y" %} Suresh Polai. All rights reserved.
+                </p>
+                <div class="flex space-x-6 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs">Privacy
+                        Policy</a>
+                    <a href="#" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs">Terms of
+                        Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/three_bg.js' %}"></script>
+    <script src="{% static 'js/spa.js' %}"></script>
+    <script>
+        // Theme & Navbar Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+        const html = document.documentElement;
+        const navbar = document.getElementById('navbar');
+
+        function updateThemeUI() {
+            if (html.classList.contains('dark')) {
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        // Init Theme
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+        } else {
+            html.classList.remove('dark');
+        }
+        updateThemeUI();
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            localStorage.theme = html.classList.contains('dark') ? 'dark' : 'light';
+            updateThemeUI();
+        });
+
+        // Navbar Scroll Effect
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 20) {
+                navbar.classList.add('nav-glass', 'shadow-sm');
+                navbar.classList.remove('py-4');
+                navbar.classList.add('py-2');
+            } else {
+                navbar.classList.remove('nav-glass', 'shadow-sm', 'py-2');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // Mobile Menu Toggle with Animation & Click Outside
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function openMenu() {
+            mobileMenu.classList.remove('hidden');
+            mobileMenuOverlay.classList.remove('hidden');
+
+            setTimeout(() => {
+                mobileMenu.classList.remove('opacity-0', 'scale-95');
+                mobileMenu.classList.add('opacity-100', 'scale-100');
+                mobileMenuOverlay.classList.remove('opacity-0');
+                mobileMenuOverlay.classList.add('opacity-100');
+
+                // Animate links
+                mobileLinks.forEach(link => {
+                    link.classList.remove('translate-x-4', 'opacity-0');
+                    link.classList.add('translate-x-0', 'opacity-100');
+                });
+            }, 10);
+        }
+
+        function closeMenu() {
+            mobileMenu.classList.remove('opacity-100', 'scale-100');
+            mobileMenu.classList.add('opacity-0', 'scale-95');
+            mobileMenuOverlay.classList.remove('opacity-100');
+            mobileMenuOverlay.classList.add('opacity-0');
+
+            mobileLinks.forEach(link => {
+                link.classList.add('translate-x-4', 'opacity-0');
+                link.classList.remove('translate-x-0', 'opacity-100');
+            });
+
+            setTimeout(() => {
+                mobileMenu.classList.add('hidden');
+                mobileMenuOverlay.classList.add('hidden');
+            }, 300);
+        }
+
+        mobileMenuBtn.addEventListener('click', () => {
+            const isClosed = mobileMenu.classList.contains('hidden');
+            if (isClosed) openMenu();
+            else closeMenu();
+        });
+
+        // Close on click outside (overlay)
+        mobileMenuOverlay.addEventListener('click', closeMenu);
+
+        // Close on link click
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
+
+        // --- Event Delegation for Contact Form (SPA Compatibility) ---
+        document.body.addEventListener('submit', function (e) {
+            if (e.target.id === 'contactForm') {
+                e.preventDefault();
+                const form = e.target;
+                const errorMsg = document.getElementById('contactError');
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const email = document.getElementById('email').value.trim();
+                const mobile = document.getElementById('mobile').value.trim();
+
+                // Validation
+                if (!email && !mobile) {
+                    if (errorMsg) {
+                        errorMsg.classList.remove('hidden');
+                        errorMsg.textContent = 'Please provide either an email or a mobile number.';
+                    }
+                    document.querySelectorAll('.contact-input').forEach(el => {
+                        el.classList.add('border-red-500', 'ring-1', 'ring-red-500');
+                    });
+                    return;
+                }
+
+                // Prepare Data
+                const formData = new FormData(form);
+                submitBtn.disabled = true;
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = 'Sending...';
+
+                // Fetch
+                fetch('/contact/submit/', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            alert(data.message);
+                            form.reset();
+                            // Reset validation Classes
+                            document.querySelectorAll('.contact-input').forEach(el => {
+                                el.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                            });
+                            if (errorMsg) errorMsg.classList.add('hidden');
+
+                        } else {
+                            if (data.status === 'error' && data.message.includes('pending')) {
+                                alert(data.message);
+                            } else {
+                                alert('Error: ' + data.message);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An unexpected error occurred. Please try again.');
+                    })
+                    .finally(() => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    });
+            }
+        });
+
+        // Clear error on input (Event Delegation)
+        document.body.addEventListener('input', function (e) {
+            if (e.target.id === 'email' || e.target.id === 'mobile') {
+                const errorMsg = document.getElementById('contactError');
+                if (errorMsg) errorMsg.classList.add('hidden');
+                document.querySelectorAll('.contact-input').forEach(el => {
+                    el.classList.remove('border-red-500', 'ring-1', 'ring-red-500');
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

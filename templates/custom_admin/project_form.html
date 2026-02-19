@@ -1,0 +1,202 @@
+{% extends 'custom_admin/base_admin.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+            {{ title }}
+        </h2>
+        <a href="{% url 'admin_projects' %}" class="text-gray-400 hover:text-white transition-colors flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Back to List
+        </a>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-dark-lighter border border-gray-700 rounded-2xl shadow-2xl overflow-hidden relative">
+        <!-- Glow Effect -->
+        <div
+            class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none">
+        </div>
+
+        <div class="p-8 relative z-10">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                <div class="bg-red-500/10 border border-red-500/50 text-red-400 px-4 py-3 rounded-xl mb-6">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+
+                <!-- Title -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-400 uppercase tracking-wider ml-1"
+                        for="id_title">Title</label>
+                    <input type="text" name="title" id="id_title" value="{{ form.title.value|default:'' }}"
+                        class="w-full bg-black/20 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                        placeholder="e.g. E-Commerce Platform" required>
+                    {% if form.title.errors %}
+                    <p class="text-red-400 text-xs mt-1 ml-1">{{ form.title.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Description -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-400 uppercase tracking-wider ml-1"
+                        for="id_description">Description</label>
+                    <textarea name="description" id="id_description" rows="5"
+                        class="w-full bg-black/20 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                        placeholder="Detailed project description..."
+                        required>{{ form.description.value|default:'' }}</textarea>
+                    {% if form.description.errors %}
+                    <p class="text-red-400 text-xs mt-1 ml-1">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Tech Stack -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-400 uppercase tracking-wider ml-1"
+                        for="id_tech_stack">Tech Stack</label>
+                    <div class="relative">
+                        <input type="text" name="tech_stack" id="id_tech_stack"
+                            value="{{ form.tech_stack.value|default:'' }}"
+                            class="w-full bg-black/20 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all pl-10"
+                            placeholder="Python, Django, React..." required>
+                        <div class="absolute left-3 top-3.5 text-gray-500">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    {% if form.tech_stack.errors %}
+                    <p class="text-red-400 text-xs mt-1 ml-1">{{ form.tech_stack.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Links Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Github -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-400 uppercase tracking-wider ml-1"
+                            for="id_github_link">GitHub URL <span
+                                class="text-gray-600 text-xs lowercase border border-gray-700 rounded px-1 ml-2">Optional</span></label>
+                        <div class="relative">
+                            <input type="url" name="github_link" id="id_github_link"
+                                value="{{ form.github_link.value|default:'' }}"
+                                class="w-full bg-black/20 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all pl-10"
+                                placeholder="https://github.com/...">
+                            <div class="absolute left-3 top-3.5 text-gray-500">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                </svg>
+                            </div>
+                        </div>
+                        {% if form.github_link.errors %}
+                        <p class="text-red-400 text-xs mt-1 ml-1">{{ form.github_link.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Live Link -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium text-gray-400 uppercase tracking-wider ml-1"
+                            for="id_live_link">Live Demo <span
+                                class="text-gray-600 text-xs lowercase border border-gray-700 rounded px-1 ml-2">Optional</span></label>
+                        <div class="relative">
+                            <input type="url" name="live_link" id="id_live_link"
+                                value="{{ form.live_link.value|default:'' }}"
+                                class="w-full bg-black/20 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all pl-10"
+                                placeholder="https://...">
+                            <div class="absolute left-3 top-3.5 text-gray-500">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14">
+                                    </path>
+                                </svg>
+                            </div>
+                        </div>
+                        {% if form.live_link.errors %}
+                        <p class="text-red-400 text-xs mt-1 ml-1">{{ form.live_link.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-400 uppercase tracking-wider ml-1"
+                        for="id_image">Project Image</label>
+                    <div
+                        class="border-2 border-dashed border-gray-700 rounded-xl p-6 text-center hover:border-blue-500 transition-colors bg-black/20">
+                        {% if form.instance.image %}
+                        <div class="mb-4 relative group inline-block">
+                            <img src="{{ form.instance.image.url }}" alt="Current" class="h-40 rounded-lg shadow-lg">
+                            <div
+                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                                <span class="text-white text-sm">Current Image</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <input type="file" name="image" id="id_image" class="hidden"
+                            onchange="document.getElementById('file-chosen').textContent = this.files[0].name">
+                        <label for="id_image" class="cursor-pointer flex flex-col items-center justify-center">
+                            <svg class="w-10 h-10 text-gray-500 mb-2" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            <span class="text-blue-400 font-medium hover:text-blue-300">Click to upload</span>
+                            <span class="text-gray-500 text-sm mt-1" id="file-chosen">No file chosen</span>
+                        </label>
+                    </div>
+                    {% if form.image.errors %}
+                    <p class="text-red-400 text-xs mt-1 ml-1">{{ form.image.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <!-- Featured Toggle -->
+                <div class="flex items-center space-x-3 bg-black/20 p-4 rounded-xl border border-gray-700">
+                    <div
+                        class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                        <input type="checkbox" name="is_featured" id="id_is_featured"
+                            class="absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer peer checked:right-0 checked:bg-blue-500 transition-all duration-200"
+                            {% if form.is_featured.value %}checked{% endif %} />
+                        <label for="id_is_featured"
+                            class="block overflow-hidden h-6 rounded-full bg-gray-600 cursor-pointer peer-checked:bg-blue-900"></label>
+                    </div>
+                    <div>
+                        <label for="id_is_featured" class="text-sm font-bold text-white cursor-pointer">Featured
+                            Project</label>
+                        <p class="text-xs text-gray-500">Show this project on the home page portfolio.</p>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-4 pt-4 border-t border-gray-800">
+                    <a href="{% url 'admin_projects' %}"
+                        class="px-6 py-2.5 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white transition-all font-medium">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="px-8 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transform hover:-translate-y-0.5 transition-all font-semibold">
+                        Save Project
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,166 @@
+<section id="about" class="min-h-screen py-20 relative z-10 animate-fade-in-up flex items-center justify-center">
+    <!-- Removed bg-white/dark to let base.html canvas show through -->
+
+    <div class="container mx-auto px-6 max-w-6xl">
+        <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 dark:text-white drop-shadow-sm">About Me</h2>
+
+        <div class="grid md:grid-cols-2 gap-12 items-start">
+            <!-- Main Bio Card -->
+            <div
+                class="glass p-8 md:p-10 rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 border border-white/20 dark:border-white/10 backdrop-blur-md">
+                <h3
+                    class="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+                    Who I Am</h3>
+                <p class="text-gray-700 dark:text-gray-200 mb-6 leading-relaxed text-lg">
+                    I am a passionate Full Stack Python Developer based in Mumbai, India.
+                    With a strong foundation in Django and modern frontend technologies,
+                    I specialize in building robust, scalable web applications that solve real-world problems.
+                </p>
+                <p class="text-gray-700 dark:text-gray-200 leading-relaxed text-lg">
+                    I love writing clean, efficient code and am always eager to learn new technologies.
+                    My journey in tech has been driven by curiosity and a desire to create seamless user experiences.
+                </p>
+
+                <div class="mt-10 flex items-center space-x-8 border-t border-gray-200 dark:border-gray-700/50 pt-8">
+                    <div class="text-center">
+                        <span class="block text-4xl font-extrabold text-primary drop-shadow-sm">2+</span>
+                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Years Exp.</span>
+                    </div>
+                    <div class="h-12 w-px bg-gray-300 dark:bg-gray-600"></div>
+                    <div class="text-center">
+                        <span class="block text-4xl font-extrabold text-secondary drop-shadow-sm">10+</span>
+                        <span class="text-sm font-medium text-gray-500 uppercase tracking-wider">Projects</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Soft Skills Cards -->
+            <div class="space-y-6">
+                <div
+                    class="glass p-6 rounded-2xl shadow-lg border border-white/20 dark:border-white/5 hover:translate-x-2 transition-transform duration-300 cursor-default bg-white/40 dark:bg-dark/40 backdrop-blur-sm">
+                    <div class="flex items-start">
+                        <div class="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg mr-4 text-2xl">🚀</div>
+                        <div>
+                            <h4 class="font-bold text-xl mb-2 dark:text-white">Fast Learner</h4>
+                            <p class="text-gray-600 dark:text-gray-300">Quickly adapting to new stacks and tools is my
+                                superpower.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="glass p-6 rounded-2xl shadow-lg border border-white/20 dark:border-white/5 hover:translate-x-2 transition-transform duration-300 cursor-default bg-white/40 dark:bg-dark/40 backdrop-blur-sm">
+                    <div class="flex items-start">
+                        <div class="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-lg mr-4 text-2xl">💡</div>
+                        <div>
+                            <h4 class="font-bold text-xl mb-2 dark:text-white">Problem Solver</h4>
+                            <p class="text-gray-600 dark:text-gray-300">I enjoy breaking down complex problems into
+                                manageable solutions.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="glass p-6 rounded-2xl shadow-lg border border-white/20 dark:border-white/5 hover:translate-x-2 transition-transform duration-300 cursor-default bg-white/40 dark:bg-dark/40 backdrop-blur-sm">
+                    <div class="flex items-start">
+                        <div class="p-3 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg mr-4 text-2xl">✨</div>
+                        <div>
+                            <h4 class="font-bold text-xl mb-2 dark:text-white">Detail Oriented</h4>
+                            <p class="text-gray-600 dark:text-gray-300">Pixel-perfect execution from design to
+                                deployment.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Image Modal -->
+<div id="imageModal"
+    class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0 transition-opacity duration-300">
+    <div class="relative max-w-4xl max-h-screen p-4 transform scale-95 transition-transform duration-300"
+        id="modalContent">
+        <button id="closeModal" class="absolute -top-10 right-0 text-white hover:text-gray-300 focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <img id="modalImage" src="" alt="Zoomed Image"
+            class="max-w-full max-h-[85vh] rounded-lg shadow-2xl border border-white/10">
+        <p id="modalCaption" class="text-white text-center mt-4 text-xl font-semibold"></p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('imageModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalImage = document.getElementById('modalImage');
+        const modalCaption = document.getElementById('modalCaption');
+        const closeBtn = document.getElementById('closeModal');
+
+        // Move modal to body to avoid stacking context issues with navbar
+        if (modal && modal.parentElement !== document.body) {
+            document.body.appendChild(modal);
+        }
+
+        // Use delegated event listener for SPA compatibility if needed, but direct selection works here
+        function setupTriggers() {
+            // Re-query triggers in case of SPA re-render
+            const triggers = document.querySelectorAll('.cert-image-trigger');
+            triggers.forEach(trigger => {
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const src = trigger.getAttribute('data-src');
+                    const caption = trigger.getAttribute('data-caption');
+                    if (src) openModal(src, caption);
+                });
+            });
+        }
+
+        function openModal(src, caption) {
+            modalImage.src = src;
+            modalCaption.textContent = caption;
+            modal.classList.remove('hidden');
+            // Lock body scroll
+            document.body.style.overflow = 'hidden';
+
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+
+            // Unlock body scroll
+            document.body.style.overflow = '';
+
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modalImage.src = '';
+            }, 300);
+        }
+
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeModal();
+            });
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeModal();
+        });
+
+        // Setup initially
+        setupTriggers();
+    });
+</script>

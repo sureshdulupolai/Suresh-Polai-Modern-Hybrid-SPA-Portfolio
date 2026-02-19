@@ -1,0 +1,166 @@
+<!-- Custom Alert Modal -->
+<div id="customAlertModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0" id="alertBackdrop"></div>
+
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-gray-900 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md scale-95 opacity-0 border border-gray-200 dark:border-gray-700"
+                id="alertPanel">
+
+                <div class="p-6">
+                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 mb-4"
+                        id="alertIconContainer">
+                        <!-- Icon will be injected here -->
+                    </div>
+
+                    <div class="text-center">
+                        <h3 class="text-lg font-bold leading-6 text-gray-900 dark:text-white mb-2" id="alertTitle">
+                            Notification
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500 dark:text-gray-400" id="alertMessage">
+                                Message goes here
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="alertFooter"
+                    class="bg-gray-50 dark:bg-gray-800/50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-gray-100 dark:border-gray-800 gap-2">
+                    <button type="button" id="alertPrimaryBtn"
+                        class="inline-flex w-full justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:w-auto transition-colors">
+                        Okay
+                    </button>
+                    <button type="button" id="alertCancelBtn"
+                        class="hidden mt-3 inline-flex w-full justify-center rounded-lg bg-white dark:bg-gray-800 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 sm:mt-0 sm:w-auto transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Custom Alert System
+    window.originalAlert = window.alert;
+
+    const modal = document.getElementById('customAlertModal');
+    const backdrop = document.getElementById('alertBackdrop');
+    const panel = document.getElementById('alertPanel');
+    const titleEl = document.getElementById('alertTitle');
+    const msgEl = document.getElementById('alertMessage');
+    const iconContainer = document.getElementById('alertIconContainer');
+    const primaryBtn = document.getElementById('alertPrimaryBtn');
+    const cancelBtn = document.getElementById('alertCancelBtn');
+
+    function closeAlert() {
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('opacity-100', 'scale-100');
+        panel.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    // Close on backdrop click
+    modal.onclick = (e) => {
+        if (e.target === modal || e.target.id === 'alertBackdrop') {
+            // Only close if it's NOT a confirm dialog (optional safety, allows implicit cancel)
+            closeAlert();
+        }
+    };
+
+    // Close on Escape
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeAlert();
+        }
+    });
+
+    window.showAlert = function (message, type = 'info', title = null, onConfirm = null) {
+        // Content
+        msgEl.textContent = message;
+
+        // Icons & Colors
+        let iconHtml = '';
+        let iconBg = '';
+        let btnColor = '';
+
+        if (type === 'success') {
+            title = title || 'Success';
+            iconBg = 'bg-green-100 dark:bg-green-900/30';
+            iconHtml = `<svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+            btnColor = 'bg-green-600 hover:bg-green-500';
+        } else if (type === 'error' || type === 'confirm-danger') {
+            title = title || 'Error';
+            iconBg = 'bg-red-100 dark:bg-red-900/30';
+            iconHtml = `<svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>`;
+            btnColor = 'bg-red-600 hover:bg-red-500';
+        } else {
+            title = title || 'Info';
+            iconBg = 'bg-blue-100 dark:bg-blue-900/30';
+            iconHtml = `<svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>`;
+            btnColor = 'bg-blue-600 hover:bg-blue-500';
+        }
+
+        // Title
+        titleEl.textContent = title;
+
+        // Icon
+        iconContainer.className = `mx-auto flex h-12 w-12 items-center justify-center rounded-full mb-4 ${iconBg}`;
+        iconContainer.innerHTML = iconHtml;
+
+        // Buttons
+        if (type === 'confirm' || type === 'confirm-danger') {
+            titleEl.textContent = title || 'Confirm Action';
+            primaryBtn.textContent = 'Confirm';
+            primaryBtn.className = `inline-flex w-full justify-center rounded-lg px-3 py-2 text-sm font-semibold text-white shadow-sm sm:w-auto transition-colors ${btnColor}`;
+
+            // Show Cancel
+            cancelBtn.classList.remove('hidden');
+            cancelBtn.textContent = 'Cancel';
+
+            // Handlers
+            primaryBtn.onclick = () => {
+                if (onConfirm) onConfirm();
+                closeAlert();
+            };
+            cancelBtn.onclick = closeAlert;
+
+        } else {
+            // Alert Mode
+            primaryBtn.textContent = 'Okay';
+            primaryBtn.className = `inline-flex w-full justify-center rounded-lg px-3 py-2 text-sm font-semibold text-white shadow-sm sm:w-auto transition-colors ${btnColor}`;
+            cancelBtn.classList.add('hidden');
+
+            primaryBtn.onclick = closeAlert;
+        }
+
+        // Show
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            backdrop.classList.remove('opacity-0');
+            panel.classList.remove('opacity-0', 'scale-95');
+            panel.classList.add('opacity-100', 'scale-100');
+        }, 10);
+    };
+
+    // Confirm Helper
+    window.showConfirm = function (message, onConfirm) {
+        window.showAlert(message, 'confirm-danger', 'Are you sure?', onConfirm);
+    };
+
+    // Override Default Alert
+    window.alert = function (msg) {
+        // Detect type based on keywords
+        let type = 'info';
+        let lowerMsg = String(msg).toLowerCase();
+        if (lowerMsg.includes('error') || lowerMsg.includes('fail') || lowerMsg.includes('wrong')) type = 'error';
+        if (lowerMsg.includes('success') || lowerMsg.includes('sent') || lowerMsg.includes('done')) type = 'success';
+
+        window.showAlert(msg, type);
+    };
+</script>
