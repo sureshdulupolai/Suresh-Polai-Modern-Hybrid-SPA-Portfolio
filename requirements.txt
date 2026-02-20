@@ -283,3 +283,7 @@ wrapt==1.17.3
 yarl==1.20.0
 yt-dlp==2025.9.5
 zope.interface==7.2
+gunicorn
+psycopg2-binary
+dj-database-url
+whitenoise
