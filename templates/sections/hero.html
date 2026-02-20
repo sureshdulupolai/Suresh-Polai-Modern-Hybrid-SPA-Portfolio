@@ -1,3 +1,4 @@
+{% load static %}
 <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
     <!-- Overlay Gradient -->
     <div
@@ -64,8 +65,9 @@
             <div
                 class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 glass p-8 rounded-2xl w-80 shadow-2xl border-t border-white/50">
                 <div class="flex items-center space-x-4 mb-6">
-                    <div class="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                        <img src="https://ui-avatars.com/api/?name=Suresh+Polai&background=random" alt="Avatar">
+                    <div
+                        class="w-12 h-12 rounded-full bg-black dark:bg-white overflow-hidden flex items-center justify-center border border-gray-200 dark:border-gray-600">
+                        <img src="{% static 'images/logo_wbg.png' %}" alt="Avatar" class="w-full h-full object-cover">
                     </div>
                     <div>
                         <h4 class="font-bold text-gray-800 dark:text-white">Suresh Polai</h4>
