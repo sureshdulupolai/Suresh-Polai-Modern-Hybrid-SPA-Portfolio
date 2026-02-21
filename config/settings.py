@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'core.middleware.ErrorLoggingMiddleware', # Custom Error Logging
+    'core.middleware.AdminAccessMiddleware', # Custom Admin Access Restriction
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 

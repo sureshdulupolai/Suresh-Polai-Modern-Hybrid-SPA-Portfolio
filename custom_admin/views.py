@@ -84,6 +84,79 @@ def login_view(request):
         
     return render(request, 'custom_admin/login.html', {'form': form})
 
+def signup_view(request):
+    if request.user.is_authenticated and request.user.is_superuser:
+        return redirect('dashboard')
+
+    # Check Lockout Status
+    lockout_time_str = request.session.get('signup_lockout_until')
+    if lockout_time_str:
+        lockout_until = timezone.datetime.fromisoformat(lockout_time_str)
+        if timezone.now() < lockout_until:
+            remaining = lockout_until - timezone.now()
+            seconds_remaining = int(remaining.total_seconds())
+            return render(request, 'custom_admin/signup.html', {
+                'locked_out': True, 
+                'remaining_seconds': seconds_remaining
+            })
+        else:
+            # Lockout expired
+            if 'signup_lockout_until' in request.session:
+                del request.session['signup_lockout_until']
+            request.session['signup_attempts'] = 0
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+        security_key = request.POST.get('security_key', '')
+
+        # 1. Validate Security Key
+        if security_key != 'developer_suresh_hu':
+            attempts = request.session.get('signup_attempts', 0) + 1
+            request.session['signup_attempts'] = attempts
+            
+            if attempts >= 2:
+                lockout_until = timezone.now() + timedelta(hours=24)
+                request.session['signup_lockout_until'] = lockout_until.isoformat()
+                return render(request, 'custom_admin/signup.html', {
+                    'locked_out': True,
+                    'remaining_seconds': 24 * 60 * 60,
+                    'error': "Maximum attempts exceeded. Locked out for 24 hours."
+                })
+            
+            messages.error(request, f"Invalid Security Key. Attempt {attempts}/2.")
+            return render(request, 'custom_admin/signup.html', {
+                'username': username
+            })
+
+        # 2. Validate Other Fields
+        if not username or not password or not confirm_password:
+            messages.error(request, "All fields are required.")
+            return render(request, 'custom_admin/signup.html', {'username': username})
+        
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'custom_admin/signup.html', {'username': username})
+        
+        from django.contrib.auth.models import User
+        if User.objects.filter(username=username).exists():
+            messages.error(request, "Username already exists.")
+            return render(request, 'custom_admin/signup.html', {'username': username})
+
+        # 3. Create Superuser
+        try:
+            user = User.objects.create_superuser(username=username, password=password, email="")
+            messages.success(request, "Admin account created successfully! Please login.")
+            # Clear attempts on success
+            request.session['signup_attempts'] = 0
+            return redirect('admin_login')
+        except Exception as e:
+            messages.error(request, f"Error creating account: {str(e)}")
+            return render(request, 'custom_admin/signup.html', {'username': username})
+    
+    return render(request, 'custom_admin/signup.html')
+
 def logout_view(request):
     logout(request)
     return redirect('admin_login')
