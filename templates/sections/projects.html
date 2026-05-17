@@ -1,11 +1,4 @@
 <section id="projects" class="min-h-screen py-24 relative overflow-hidden">
-    <!-- Background Decor -->
-    <div
-        class="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none">
-    </div>
-    <div
-        class="absolute bottom-0 left-0 w-96 h-96 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none">
-    </div>
 
     <div class="container mx-auto px-6 relative z-10">
         <div class="text-center mb-16 animate-fade-in-up">
@@ -19,13 +12,13 @@
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
             {% for project in projects %}
             <!-- Project Card -->
-            <div class="group perspective-1000 animate-fade-in-up"
+            <div class="group perspective-1000 animate-fade-in-up h-full"
                 style="animation-delay: {{ forloop.counter0|add:1|default:0 }}00ms;">
                 <div
-                    class="relative transform-style-3d transition-all duration-500 hover:rotate-x-2 hover:rotate-y-2 hover:scale-[1.02]">
+                    class="relative h-full transform-style-3d transition-all duration-500 hover:rotate-x-2 hover:rotate-y-2 hover:scale-[1.02]">
                     <!-- Glass Container -->
                     <div
-                        class="glass rounded-2xl overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-500 border border-white/20 dark:border-white/5 bg-white/40 dark:bg-gray-800/40">
+                        class="glass h-full flex flex-col rounded-2xl overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-500 border border-white/20 dark:border-white/5 bg-white/40 dark:bg-gray-800/40">
 
                         <!-- Image Area -->
                         <div class="relative h-56 overflow-hidden">
@@ -73,22 +66,26 @@
                         </div>
 
                         <!-- Content Area -->
-                        <div class="p-6 relative z-20 bg-white dark:bg-gray-900 transition-colors">
-                            <h3
-                                class="text-xl font-bold mb-2 dark:text-white group-hover:text-primary transition-colors">
-                                {{ project.title }}</h3>
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-2 h-10">
-                                {{ project.description }}
-                            </p>
+                        <div class="p-6 flex-grow flex flex-col justify-between relative z-20 bg-white dark:bg-gray-900 transition-colors">
+                            <div>
+                                <h3
+                                    class="text-xl font-bold mb-2 dark:text-white group-hover:text-primary transition-colors">
+                                    {{ project.title }}</h3>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4 line-clamp-2 h-10">
+                                    {{ project.description }}
+                                </p>
+                            </div>
 
                             <!-- Tags -->
-                            <div class="flex flex-wrap gap-2 mt-4">
-                                {% for tech in project.tech_stack.split %}
-                                <span
-                                    class="px-2 py-1 text-[10px] uppercase tracking-wider font-semibold border border-primary/20 text-primary rounded-md bg-primary/5">
-                                    {{ tech }}
-                                </span>
-                                {% endfor %}
+                            <div class="tech-stack-wrapper mt-auto pt-4 border-t border-gray-100 dark:border-gray-800">
+                                <div class="flex flex-wrap gap-2 tech-tags-container" data-tech="{{ project.tech_stack }}">
+                                    {% for tech in project.tech_stack.split %}
+                                    <span
+                                        class="px-2 py-1 text-[10px] uppercase tracking-wider font-semibold border border-primary/20 text-primary rounded-md bg-primary/5">
+                                        {{ tech }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -121,3 +118,90 @@
         transform: rotateY(2deg);
     }
 </style>
+
+<script>
+    (function() {
+        function initTechStacks() {
+            const containers = document.querySelectorAll('.tech-tags-container:not([data-initialized])');
+            containers.forEach(container => {
+                container.setAttribute('data-initialized', 'true');
+                const rawTech = container.getAttribute('data-tech') || '';
+                let techs = [];
+                if (rawTech.includes(',')) {
+                    techs = rawTech.split(',').map(t => t.trim()).filter(t => t.length > 0);
+                } else {
+                    techs = rawTech.split(/\s+/).map(t => t.trim()).filter(t => t.length > 0);
+                }
+                // Clean trailing commas/dots
+                techs = techs.map(t => t.replace(/,$/, '').trim());
+
+                const maxInitial = 5;
+                container.innerHTML = '';
+
+                techs.forEach((tech, index) => {
+                    const span = document.createElement('span');
+                    span.className = `tech-tag px-2 py-1 text-[10px] uppercase tracking-wider font-semibold border border-primary/20 text-primary rounded-md bg-primary/5 transition-all duration-300 ${index >= maxInitial ? 'hidden opacity-0 scale-95' : ''}`;
+                    span.textContent = tech;
+                    container.appendChild(span);
+                });
+
+                if (techs.length > maxInitial) {
+                    const toggleBtn = document.createElement('button');
+                    toggleBtn.className = 'px-2 py-1 text-[10px] uppercase tracking-wider font-bold text-secondary border border-secondary/20 rounded-md bg-secondary/5 hover:bg-secondary hover:text-white transition-all duration-300 flex items-center gap-1 focus:outline-none';
+                    toggleBtn.innerHTML = `<span>+${techs.length - maxInitial} More</span> <svg class="w-3 h-3 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>`;
+                    
+                    let isExpanded = false;
+                    toggleBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        isExpanded = !isExpanded;
+                        
+                        const hiddenTags = container.querySelectorAll('.tech-tag.hidden, .tech-tag.expanded');
+                        
+                        if (isExpanded) {
+                            hiddenTags.forEach(tag => {
+                                tag.classList.remove('hidden');
+                                setTimeout(() => {
+                                    tag.classList.remove('opacity-0', 'scale-95');
+                                    tag.classList.add('expanded', 'opacity-100', 'scale-100');
+                                }, 10);
+                            });
+                            toggleBtn.innerHTML = `<span>Show Less</span> <svg class="w-3 h-3 rotate-180 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>`;
+                            toggleBtn.classList.remove('text-secondary', 'border-secondary/20', 'bg-secondary/5');
+                            toggleBtn.classList.add('text-primary', 'border-primary/20', 'bg-primary/5');
+                        } else {
+                            hiddenTags.forEach(tag => {
+                                tag.classList.remove('opacity-100', 'scale-100');
+                                tag.classList.add('opacity-0', 'scale-95');
+                                setTimeout(() => {
+                                    tag.classList.add('hidden');
+                                    tag.classList.remove('expanded');
+                                }, 300);
+                            });
+                            toggleBtn.innerHTML = `<span>+${techs.length - maxInitial} More</span> <svg class="w-3 h-3 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>`;
+                            toggleBtn.classList.remove('text-primary', 'border-primary/20', 'bg-primary/5');
+                            toggleBtn.classList.add('text-secondary', 'border-secondary/20', 'bg-secondary/5');
+                        }
+                    });
+                    container.appendChild(toggleBtn);
+                }
+            });
+        }
+
+        // Run immediately
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initTechStacks);
+        } else {
+            initTechStacks();
+        }
+
+        // MutationObserver to automatically apply logic when SPA changes DOM
+        if (window.techObserver) {
+            window.techObserver.disconnect();
+        }
+        window.techObserver = new MutationObserver(() => {
+            initTechStacks();
+        });
+        window.techObserver.observe(document.body, { childList: true, subtree: true });
+    })();
+</script>
