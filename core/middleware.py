@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import Http404
 from .models import ErrorLog
+import traceback
 
 class ErrorLoggingMiddleware:
     def __init__(self, get_response):
@@ -11,7 +12,11 @@ class ErrorLoggingMiddleware:
         return response
 
     def process_exception(self, request, exception):
-        # Log the error to the database
+        # Ignore standard Http404 exceptions and let Django's core 404 handler handle it
+        if isinstance(exception, Http404):
+            return None
+
+        # Log standard exceptions to the database
         ErrorLog.objects.create(
             path=request.path,
             method=request.method,
