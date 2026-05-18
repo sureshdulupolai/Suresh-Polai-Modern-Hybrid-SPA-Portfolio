@@ -46,6 +46,9 @@ async function loadContent(url) {
             app.innerHTML = html;
             window.scrollTo(0, 0);
             initializeAnimations();
+            if (typeof window.updateActiveNavLink === 'function') {
+                window.updateActiveNavLink();
+            }
         } else {
             app.innerHTML = '<h1>404 - Page Not Found</h1>';
         }

@@ -1,4 +1,4 @@
-{% load static %}
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 
@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="icon" href="{% static 'images/logo_wbg.png' %}" type="image/png">
+    <link rel="icon" href="/static/images/logo_wbg.png" type="image/png">
 
     <!-- Three.js & GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -181,23 +181,23 @@
             </a>
 
             <div id="desktop-nav-menu" class="hidden md:flex space-x-8 items-center relative">
-                <a href="/" data-link class="text-sm font-medium hover:text-primary transition-all duration-300 relative py-1.5 {% if active_section == 'home' or not active_section %}text-primary{% else %}text-gray-700 dark:text-gray-300{% endif %}">
+                <a href="/" data-link class="text-sm font-medium hover:text-primary transition-all duration-300 relative py-1.5 text-gray-700 dark:text-gray-300">
                     Home
                 </a>
                 <a href="/about" data-link
-                    class="text-sm font-medium hover:text-primary transition-all duration-300 relative py-1.5 {% if active_section == 'about' %}text-primary{% else %}text-gray-700 dark:text-gray-300{% endif %}">
+                    class="text-sm font-medium hover:text-primary transition-all duration-300 relative py-1.5 text-gray-700 dark:text-gray-300">
                     About
                 </a>
                 <a href="/projects" data-link
-                    class="text-sm font-medium hover:text-primary transition-all duration-300 relative py-1.5 {% if active_section == 'projects' %}text-primary{% else %}text-gray-700 dark:text-gray-300{% endif %}">
+                    class="text-sm font-medium hover:text-primary transition-all duration-300 relative py-1.5 text-gray-700 dark:text-gray-300">
                     Projects
                 </a>
                 <a href="/resume" data-link
-                    class="text-sm font-medium hover:text-primary transition-all duration-300 relative py-1.5 {% if active_section == 'resume' %}text-primary{% else %}text-gray-700 dark:text-gray-300{% endif %}">
+                    class="text-sm font-medium hover:text-primary transition-all duration-300 relative py-1.5 text-primary">
                     Resume
                 </a>
                 <a href="/contact" data-link
-                    class="text-sm font-medium hover:text-primary transition-all duration-300 relative py-1.5 {% if active_section == 'contact' %}text-primary{% else %}text-gray-700 dark:text-gray-300{% endif %}">
+                    class="text-sm font-medium hover:text-primary transition-all duration-300 relative py-1.5 text-gray-700 dark:text-gray-300">
                     Contact
                 </a>
                 <!-- Premium Sliding Line Indicator -->
@@ -253,31 +253,484 @@
                     class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
                     style="transition-delay: 200ms;">Contact</a>
 
-                {% if user.is_authenticated and user.is_superuser %}
-                <div class="h-px bg-gray-200 dark:bg-gray-700 mx-6 my-2 mobile-link transform translate-x-4 opacity-0"
-                    style="transition-delay: 250ms;"></div>
-                <a href="{% url 'dashboard' %}"
-                    class="mobile-link px-6 py-3 text-lg font-bold text-primary hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
-                    style="transition-delay: 300ms;">
-                    Admin Panel
-                </a>
-                <a href="{% url 'admin_logout' %}"
-                    class="mobile-link px-6 py-3 text-base font-medium text-red-500 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
-                    style="transition-delay: 350ms;">
-                    Logout
-                </a>
-                {% endif %}
+                
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
     <main id="main-content" class="pt-20 md:pt-22 min-h-screen relative z-10">
-        {% block content %}
-        {% endblock %}
+        
+<div id="spa-container">
+    
+    
+<div class="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-6xl mx-auto space-y-20">
+
+        <!-- Header -->
+        <div class="text-center space-y-6 animate-fade-in-up">
+            <h2
+                class="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">
+                Professional Journey
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto text-lg">
+                A timeline of my experience, technical proficiency, and career highlights.
+            </p>
+            <div class="flex justify-center pt-2">
+                <a href="/static/docs/Suresh_Polai_CV.pdf" download="Suresh_Polai_CV.pdf"
+                    class="group relative inline-flex items-center justify-center p-0.5 mb-2 overflow-hidden text-sm font-semibold text-gray-900 rounded-full group bg-gradient-to-br from-blue-500 to-purple-600 group-hover:from-blue-500 group-hover:to-purple-600 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-blue-800 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg hover:shadow-blue-500/20">
+                    <span class="relative px-8 py-3.5 transition-all ease-in duration-300 bg-white dark:bg-gray-900 rounded-full group-hover:bg-opacity-0 flex items-center gap-3">
+                        <svg class="w-5 h-5 text-blue-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span class="text-gray-800 dark:text-gray-100 group-hover:text-white transition-colors">Download Resume (CV)</span>
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Experience Section -->
+        <div class="animate-fade-in-up" style="animation-delay: 100ms;">
+            <div class="flex items-center mb-10">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center mr-6 shadow-lg shadow-blue-500/20 transform rotate-3">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-800 dark:text-white">Experience</h3>
+            </div>
+
+            <div class="relative border-l-2 border-gray-200 dark:border-gray-800 ml-6 space-y-12">
+                
+                <div class="mb-10 ml-10 relative group">
+                    <span
+                        class="absolute -left-[45px] top-1 h-6 w-6 rounded-full border-4 border-gray-50 dark:border-dark bg-blue-500 group-hover:bg-purple-500 transition-colors shadow-sm"></span>
+
+                    <div
+                        class="p-8 rounded-3xl border border-gray-100 dark:border-white/5 hover:border-blue-500/30 dark:hover:border-blue-500/30 transition-all duration-300 shadow-sm hover:shadow-xl bg-white/50 dark:bg-card-dark backdrop-blur-md">
+                        <div class="flex flex-col md:flex-row md:items-start justify-between mb-4 gap-4">
+                            <div>
+                                <h4
+                                    class="text-2xl font-bold text-gray-800 dark:text-white group-hover:text-blue-500 dark:group-hover:text-blue-400 transition-colors">
+                                    Spyn Technologies</h4>
+                                <p class="text-blue-600 dark:text-blue-400 font-semibold text-lg mt-1">Python Developer
+                                </p>
+                            </div>
+                            <span
+                                class="text-sm font-medium text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-white/5 px-4 py-1.5 rounded-full inline-block whitespace-nowrap">
+                                Oct 2025 - Jan 2026
+                                
+                            </span>
+                        </div>
+                        <p class="text-gray-600 dark:text-gray-300 leading-relaxed text-base">Served as a Python Developer, working on AI-powered wellness systems focused on stress detection and emotion analysis. Contributed to real-time data processing tools and interactive dashboards using Python and computer vision technologies. Experienced in production-level development, teamwork, and delivering scalable, performance-driven solutions.</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Tech Stack & Skills -->
+        <div class="animate-fade-in-up" style="animation-delay: 200ms;">
+            <div class="flex items-center mb-10">
+                <div
+                    class="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 flex items-center justify-center mr-6 shadow-lg shadow-purple-500/20 transform -rotate-3">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-3xl font-bold text-gray-800 dark:text-white">Tech Stack</h3>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <div
+                    class="p-6 rounded-3xl border border-gray-100 dark:border-white/5 bg-white/50 dark:bg-card-dark hover:shadow-lg transition-all duration-300 backdrop-blur-md">
+                    <h4
+                        class="text-xl font-bold text-gray-800 dark:text-white mb-6 capitalize border-b border-gray-100 dark:border-gray-700/50 pb-3">
+                        Backend</h4>
+                    <div class="flex flex-wrap gap-3">
+                        
+                        <div class="group relative">
+                            <div
+                                class="px-4 py-2 bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 rounded-xl border border-gray-200 dark:border-white/5 transition-all cursor-default shadow-sm">
+                                <span
+                                    class="text-gray-700 dark:text-gray-300 font-medium group-hover:text-primary transition-colors text-sm">Python</span>
+                            </div>
+                            <!-- Tooltip -->
+                            <div
+                                class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
+                                100%
+                                <svg class="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px"
+                                    viewBox="0 0 255 255">
+                                    <polygon class="fill-current" points="0,0 127.5,127.5 255,0" />
+                                </svg>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div
+                    class="p-6 rounded-3xl border border-gray-100 dark:border-white/5 bg-white/50 dark:bg-card-dark hover:shadow-lg transition-all duration-300 backdrop-blur-md">
+                    <h4
+                        class="text-xl font-bold text-gray-800 dark:text-white mb-6 capitalize border-b border-gray-100 dark:border-gray-700/50 pb-3">
+                        Frontend</h4>
+                    <div class="flex flex-wrap gap-3">
+                        
+                        <div class="group relative">
+                            <div
+                                class="px-4 py-2 bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 rounded-xl border border-gray-200 dark:border-white/5 transition-all cursor-default shadow-sm">
+                                <span
+                                    class="text-gray-700 dark:text-gray-300 font-medium group-hover:text-primary transition-colors text-sm">React</span>
+                            </div>
+                            <!-- Tooltip -->
+                            <div
+                                class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1.5 bg-gray-900 text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap shadow-xl">
+                                85%
+                                <svg class="absolute text-gray-900 h-2 w-full left-0 top-full" x="0px" y="0px"
+                                    viewBox="0 0 255 255">
+                                    <polygon class="fill-current" points="0,0 127.5,127.5 255,0" />
+                                </svg>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-12">
+            <!-- Certifications -->
+            <div class="animate-fade-in-up" style="animation-delay: 300ms;">
+                <div class="flex items-center mb-10">
+                    <div
+                        class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center mr-6 shadow-lg shadow-green-500/20 transform rotate-2">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-800 dark:text-white">Certifications</h3>
+                </div>
+
+                <div class="space-y-6">
+                    
+                    <div
+                        class="p-6 rounded-3xl border border-gray-100 dark:border-white/5 bg-white/50 dark:bg-card-dark hover:bg-white dark:hover:bg-white/5 transition-all duration-300 flex items-start gap-4 shadow-sm hover:shadow-md backdrop-blur-md">
+                        
+                        <div class="w-16 h-16 rounded-xl overflow-hidden shadow-sm flex-shrink-0 group cursor-pointer cert-image-trigger"
+                            data-src="/media/certifications/HTML_CSS_it_vedant.png" data-caption="Html &amp; CSS">
+                            <img src="/media/certifications/HTML_CSS_it_vedant.png" alt="Html &amp; CSS"
+                                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500">
+                        </div>
+                        
+                        <div>
+                            <h4 class="text-lg font-bold text-gray-800 dark:text-white leading-tight">Html &amp; CSS
+                            </h4>
+                            <p class="text-primary font-medium text-sm mt-1">IT Vedant</p>
+                            <span class="text-xs text-gray-500 font-mono mt-2 block">2025</span>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Achievements -->
+            <div class="animate-fade-in-up" style="animation-delay: 400ms;">
+                <div class="flex items-center mb-10">
+                    <div
+                        class="w-12 h-12 rounded-2xl bg-gradient-to-br from-yellow-500 to-yellow-600 flex items-center justify-center mr-6 shadow-lg shadow-yellow-500/20 transform -rotate-2">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-800 dark:text-white">Achievements</h3>
+                </div>
+
+                <div class="space-y-6">
+                    
+                    <div
+                        class="text-center py-8 text-gray-500 italic border border-dashed border-gray-300 dark:border-gray-700 rounded-2xl">
+                        No achievements listed.</div>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Re-using Image Modal Logic Here for Certifications -->
+<div id="imageModal"
+    class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-black/80 backdrop-blur-md opacity-0 transition-opacity duration-300">
+    <div class="relative max-w-4xl max-h-screen p-4 transform scale-95 transition-transform duration-300"
+        id="modalContent">
+        <button id="closeModal" class="absolute -top-10 right-0 text-white hover:text-gray-300 focus:outline-none">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <img id="modalImage" src="" alt="Zoomed Image"
+            class="max-w-full max-h-[85vh] rounded-lg shadow-2xl border border-white/10">
+        <p id="modalCaption" class="text-white text-center mt-4 text-xl font-semibold"></p>
+    </div>
+</div>
+
+<script>
+    // Self-contained logic for this section to handle re-renders if needed
+    (function () {
+        const modal = document.getElementById('imageModal');
+        const modalContent = document.getElementById('modalContent');
+        const modalImage = document.getElementById('modalImage');
+        const modalCaption = document.getElementById('modalCaption');
+        const closeBtn = document.getElementById('closeModal');
+
+        // Move modal to body
+        if (modal && modal.parentElement !== document.body) {
+            document.body.appendChild(modal);
+        }
+
+        function setupTriggers() {
+            const triggers = document.querySelectorAll('.cert-image-trigger');
+            triggers.forEach(trigger => {
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const src = trigger.getAttribute('data-src');
+                    const caption = trigger.getAttribute('data-caption');
+                    if (src) openModal(src, caption);
+                });
+            });
+        }
+
+        function openModal(src, caption) {
+            modalImage.src = src;
+            modalCaption.textContent = caption;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            document.body.style.overflow = '';
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modalImage.src = '';
+            }, 300);
+        }
+
+        if (closeBtn) {
+            // Remove old listeners to prevent duplicates if any (basic check)
+            const newCloseBtn = closeBtn.cloneNode(true);
+            closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+            newCloseBtn.addEventListener('click', closeModal);
+        }
+
+        if (modal) {
+            const newModal = modal.cloneNode(true);
+            // We need to re-find elements inside the new modal since we cloned it
+            // Actually cloning modal might be too aggressive if it is already in body.
+            // Simpler: Just add listener, duplicate listeners on same element for same function is fine if careful, 
+            // or just use onclick attribute to be safe against multi-binding in SPA. 
+            // Let's stick to simple addEventListener, assuming page reload clears.
+
+            modal.onclick = (e) => {
+                if (e.target === modal) closeModal();
+            };
+        }
+
+        document.onkeydown = (e) => {
+            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeModal();
+        };
+
+        setupTriggers();
+    })();
+</script>
+    
+</div>
+
     </main>
 
-    {% include 'components/alert_modal.html' %}
+    <!-- Custom Alert Modal -->
+<div id="customAlertModal" class="fixed inset-0 z-[100] hidden" aria-labelledby="modal-title" role="dialog"
+    aria-modal="true">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity opacity-0" id="alertBackdrop"></div>
+
+    <div class="fixed inset-0 z-10 overflow-y-auto">
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-gray-900 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-md scale-95 opacity-0 border border-gray-200 dark:border-gray-700"
+                id="alertPanel">
+
+                <div class="p-6">
+                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/30 mb-4"
+                        id="alertIconContainer">
+                        <!-- Icon will be injected here -->
+                    </div>
+
+                    <div class="text-center">
+                        <h3 class="text-lg font-bold leading-6 text-gray-900 dark:text-white mb-2" id="alertTitle">
+                            Notification
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500 dark:text-gray-400" id="alertMessage">
+                                Message goes here
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="alertFooter"
+                    class="bg-gray-50 dark:bg-gray-800/50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-gray-100 dark:border-gray-800 gap-2">
+                    <button type="button" id="alertPrimaryBtn"
+                        class="inline-flex w-full justify-center rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 sm:w-auto transition-colors">
+                        Okay
+                    </button>
+                    <button type="button" id="alertCancelBtn"
+                        class="hidden mt-3 inline-flex w-full justify-center rounded-lg bg-white dark:bg-gray-800 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-300 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 sm:mt-0 sm:w-auto transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Custom Alert System
+    window.originalAlert = window.alert;
+
+    const modal = document.getElementById('customAlertModal');
+    const backdrop = document.getElementById('alertBackdrop');
+    const panel = document.getElementById('alertPanel');
+    const titleEl = document.getElementById('alertTitle');
+    const msgEl = document.getElementById('alertMessage');
+    const iconContainer = document.getElementById('alertIconContainer');
+    const primaryBtn = document.getElementById('alertPrimaryBtn');
+    const cancelBtn = document.getElementById('alertCancelBtn');
+
+    function closeAlert() {
+        backdrop.classList.add('opacity-0');
+        panel.classList.remove('opacity-100', 'scale-100');
+        panel.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+
+    // Close on backdrop click
+    modal.onclick = (e) => {
+        if (e.target === modal || e.target.id === 'alertBackdrop') {
+            // Only close if it's NOT a confirm dialog (optional safety, allows implicit cancel)
+            closeAlert();
+        }
+    };
+
+    // Close on Escape
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+            closeAlert();
+        }
+    });
+
+    window.showAlert = function (message, type = 'info', title = null, onConfirm = null) {
+        // Content
+        msgEl.textContent = message;
+
+        // Icons & Colors
+        let iconHtml = '';
+        let iconBg = '';
+        let btnColor = '';
+
+        if (type === 'success') {
+            title = title || 'Success';
+            iconBg = 'bg-green-100 dark:bg-green-900/30';
+            iconHtml = `<svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`;
+            btnColor = 'bg-green-600 hover:bg-green-500';
+        } else if (type === 'error' || type === 'confirm-danger') {
+            title = title || 'Error';
+            iconBg = 'bg-red-100 dark:bg-red-900/30';
+            iconHtml = `<svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>`;
+            btnColor = 'bg-red-600 hover:bg-red-500';
+        } else {
+            title = title || 'Info';
+            iconBg = 'bg-blue-100 dark:bg-blue-900/30';
+            iconHtml = `<svg class="h-6 w-6 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" /></svg>`;
+            btnColor = 'bg-blue-600 hover:bg-blue-500';
+        }
+
+        // Title
+        titleEl.textContent = title;
+
+        // Icon
+        iconContainer.className = `mx-auto flex h-12 w-12 items-center justify-center rounded-full mb-4 ${iconBg}`;
+        iconContainer.innerHTML = iconHtml;
+
+        // Buttons
+        if (type === 'confirm' || type === 'confirm-danger') {
+            titleEl.textContent = title || 'Confirm Action';
+            primaryBtn.textContent = 'Confirm';
+            primaryBtn.className = `inline-flex w-full justify-center rounded-lg px-3 py-2 text-sm font-semibold text-white shadow-sm sm:w-auto transition-colors ${btnColor}`;
+
+            // Show Cancel
+            cancelBtn.classList.remove('hidden');
+            cancelBtn.textContent = 'Cancel';
+
+            // Handlers
+            primaryBtn.onclick = () => {
+                if (onConfirm) onConfirm();
+                closeAlert();
+            };
+            cancelBtn.onclick = closeAlert;
+
+        } else {
+            // Alert Mode
+            primaryBtn.textContent = 'Okay';
+            primaryBtn.className = `inline-flex w-full justify-center rounded-lg px-3 py-2 text-sm font-semibold text-white shadow-sm sm:w-auto transition-colors ${btnColor}`;
+            cancelBtn.classList.add('hidden');
+
+            primaryBtn.onclick = closeAlert;
+        }
+
+        // Show
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            backdrop.classList.remove('opacity-0');
+            panel.classList.remove('opacity-0', 'scale-95');
+            panel.classList.add('opacity-100', 'scale-100');
+        }, 10);
+    };
+
+    // Confirm Helper
+    window.showConfirm = function (message, onConfirm) {
+        window.showAlert(message, 'confirm-danger', 'Are you sure?', onConfirm);
+    };
+
+    // Override Default Alert
+    window.alert = function (msg) {
+        // Detect type based on keywords
+        let type = 'info';
+        let lowerMsg = String(msg).toLowerCase();
+        if (lowerMsg.includes('error') || lowerMsg.includes('fail') || lowerMsg.includes('wrong')) type = 'error';
+        if (lowerMsg.includes('success') || lowerMsg.includes('sent') || lowerMsg.includes('done')) type = 'success';
+
+        window.showAlert(msg, type);
+    };
+</script>
 
     <!-- Premium Footer -->
     <footer
@@ -339,7 +792,7 @@
             <div
                 class="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
                 <p class="text-gray-400 text-xs text-center md:text-left">
-                    &copy; {% now "Y" %} Suresh Polai. All rights reserved.
+                    &copy; 2026 Suresh Polai. All rights reserved.
                 </p>
                 <div class="flex space-x-6 mt-4 md:mt-0">
                     <a href="#" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-xs">Privacy
@@ -351,7 +804,7 @@
         </div>
     </footer>
 
-    <script src="{% static 'js/three_bg.js' %}"></script>
+    <script src="/static/js/three_bg.js"></script>
     <!-- Inline SPA dynamic page routing logic prevents all caching glitches -->
     <script>
         // Theme & Navbar Logic
