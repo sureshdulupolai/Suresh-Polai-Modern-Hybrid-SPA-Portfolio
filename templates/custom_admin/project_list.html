@@ -33,14 +33,15 @@
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr>
+                        <th class="py-4 px-8 bg-gray-50/50 font-semibold text-gray-500 text-xs uppercase tracking-wider w-16">
+                            #</th>
                         <th class="py-4 px-8 bg-gray-50/50 font-semibold text-gray-500 text-xs uppercase tracking-wider w-28">
                             Sort Order</th>
                         <th class="py-4 px-8 bg-gray-50/50 font-semibold text-gray-500 text-xs uppercase tracking-wider">
                             Title</th>
                         <th class="py-4 px-8 bg-gray-50/50 font-semibold text-gray-500 text-xs uppercase tracking-wider">
                             Tech Stack</th>
-                        <th class="py-4 px-8 bg-gray-50/50 font-semibold text-gray-500 text-xs uppercase tracking-wider">
-                            Featured</th>
+
                         <th
                             class="py-4 px-8 bg-gray-50/50 font-semibold text-gray-500 text-xs uppercase tracking-wider text-right">
                             Actions</th>
@@ -49,6 +50,9 @@
                 <tbody>
                     {% for project in projects %}
                     <tr class="border-b last:border-0 hover:bg-gray-50 transition-colors group">
+                        <td class="py-4 px-8 text-sm font-semibold text-gray-400">
+                            {{ forloop.counter }}
+                        </td>
                         <td class="py-4 px-8">
                             <input type="number" name="order_{{ project.pk }}" value="{{ project.order }}"
                                 class="w-16 px-2 py-1 text-sm bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-gray-800 font-semibold text-center">
@@ -66,15 +70,7 @@
                                 {% endif %}
                             </div>
                         </td>
-                        <td class="py-4 px-8">
-                            {% if project.is_featured %}
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Yes</span>
-                            {% else %}
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">No</span>
-                            {% endif %}
-                        </td>
+
                         <td class="py-4 px-8 text-right space-x-3">
                             <a href="{% url 'admin_project_edit' project.pk %}"
                                 class="text-gray-400 hover:text-primary font-medium text-sm transition-colors inline-block"

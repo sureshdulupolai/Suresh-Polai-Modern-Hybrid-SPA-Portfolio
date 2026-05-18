@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Project, Experience, Skill, SiteVisit, Achievement, Certification
+from .models import Project, Experience, Skill, SiteVisit, Achievement, Certification, SiteSettings
 from django.http import Http404
 
 def index(request):
@@ -62,9 +62,7 @@ def index(request):
     
     if request.headers.get('X-SPA-Request') == 'true':
         if active_section == 'projects':
-            projects = Project.objects.filter(is_featured=True).order_by('order', '-created_at')
-            if not projects.exists():
-                projects = Project.objects.all().order_by('order', '-created_at')
+            projects = Project.objects.all().order_by('order', '-created_at')
             return render(request, 'sections/projects.html', {'projects': projects})
         elif active_section == 'experience':
             experiences = Experience.objects.all().order_by('-start_date')
@@ -107,11 +105,12 @@ def index(request):
             categories[skill.category].append(skill)
             
         return {
-            'projects': Project.objects.filter(is_featured=True).order_by('order', '-created_at') or Project.objects.all().order_by('order', '-created_at'),
+            'projects': Project.objects.all().order_by('order', '-created_at'),
             'experiences': Experience.objects.all().order_by('-start_date'),
             'categories': categories,
             'achievements': Achievement.objects.all(),
             'certifications': Certification.objects.all().order_by('-year'),
+            'site_settings': SiteSettings.get_settings(),
         }
 
     # Full page load
@@ -130,19 +129,17 @@ def get_section(request, section_name):
     
     elif section_name == 'about':
         return render(request, 'sections/about.html', {
-            'achievements': Achievement.objects.all(),
-            'certifications': Certification.objects.all().order_by('-year')
+            'achievements': Achievement.objects.all().order_by('order', '-date'),
+            'certifications': Certification.objects.all().order_by('order', '-year'),
+            'site_settings': SiteSettings.get_settings(),
         })
     
     elif section_name == 'projects':
-        projects = Project.objects.filter(is_featured=True).order_by('order', '-created_at')
-        if not projects.exists(): 
-             # Fallback if no featured, show all or just empty
-             projects = Project.objects.all().order_by('order', '-created_at')
+        projects = Project.objects.all().order_by('order', '-created_at')
         return render(request, 'sections/projects.html', {'projects': projects})
     
     elif section_name == 'experience':
-        experiences = Experience.objects.all().order_by('-start_date')
+        experiences = Experience.objects.all().order_by('order', '-start_date')
         return render(request, 'sections/experience.html', {'experiences': experiences})
     
     elif section_name == 'skills':
@@ -167,12 +164,11 @@ def get_section(request, section_name):
             categories[skill.category].append(skill)
             
         return render(request, 'sections/resume.html', {
-            'experiences': Experience.objects.all().order_by('-start_date'),
+            'experiences': Experience.objects.all().order_by('order', '-start_date'),
             'categories': categories,
-            'achievements': Achievement.objects.all(),
-            'certifications': Certification.objects.all().order_by('-year')
+            'achievements': Achievement.objects.all().order_by('order', '-date'),
+            'certifications': Certification.objects.all().order_by('order', '-year')
         })
-        
     else:
         raise Http404("Section not found")
 

@@ -8,7 +8,6 @@ class Project(models.Model):
     live_link = models.URLField(blank=True, null=True)
     image = models.ImageField(upload_to='projects/')
     created_at = models.DateTimeField(auto_now_add=True)
-    is_featured = models.BooleanField(default=False)
     order = models.IntegerField(default=0, help_text="Ordering index (lower numbers show first)")
 
     class Meta:
@@ -23,7 +22,11 @@ class Experience(models.Model):
     description = models.TextField()
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
+    order = models.IntegerField(default=0, help_text="Ordering index (lower numbers show first)")
     
+    class Meta:
+        ordering = ['order', '-start_date']
+        
     def __str__(self):
         return f"{self.role} at {self.company}"
 
@@ -45,6 +48,10 @@ class Achievement(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     date = models.DateField(null=True, blank=True)
+    order = models.IntegerField(default=0, help_text="Ordering index (lower numbers show first)")
+
+    class Meta:
+        ordering = ['order', '-date']
 
     def __str__(self):
         return self.title
@@ -54,6 +61,10 @@ class Certification(models.Model):
     provider = models.CharField(max_length=200)
     year = models.IntegerField()
     image = models.ImageField(upload_to='certifications/', blank=True, null=True)
+    order = models.IntegerField(default=0, help_text="Ordering index (lower numbers show first)")
+
+    class Meta:
+        ordering = ['order', '-year']
 
     def __str__(self):
         return self.title
@@ -94,3 +105,20 @@ class ErrorLog(models.Model):
 
     def __str__(self):
         return f"{self.method} {self.path} - {self.timestamp}"
+
+
+class SiteSettings(models.Model):
+    experience_years = models.CharField(max_length=50, default="2+")
+    projects_count = models.CharField(max_length=50, default="15+")
+
+    class Meta:
+        verbose_name = "Site Settings"
+        verbose_name_plural = "Site Settings"
+
+    def __str__(self):
+        return "Global Site Settings"
+
+    @classmethod
+    def get_settings(cls):
+        obj, created = cls.objects.get_or_create(id=1)
+        return obj

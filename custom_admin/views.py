@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from core.models import Project, Skill, Experience, Achievement, Certification, SiteVisit, ContactSubmission, ErrorLog
+from core.models import Project, Skill, Experience, Achievement, Certification, SiteVisit, ContactSubmission, ErrorLog, SiteSettings
 
 # Views for Admin Panel
 
@@ -299,6 +299,12 @@ class ItemWrapper:
     def __str__(self):
         return str(self.item)
     @property
+    def pk(self):
+        return self.item.pk
+    @property
+    def order(self):
+        return getattr(self.item, 'order', 0)
+    @property
     def edit_url(self):
         from django.urls import reverse
         return reverse(f'{self.base_url}_edit', kwargs={'pk': self.item.pk})
@@ -310,10 +316,14 @@ class ItemWrapper:
 def render_generic_list(request, items, title, url_name_base, active_tab=None):
     from django.urls import reverse
     wrapped_items = [ItemWrapper(i, url_name_base) for i in items]
+    reorder_url = None
+    if title in ['Experience', 'Achievements', 'Certifications']:
+        reorder_url = reverse(f'{url_name_base}_reorder')
     return render(request, 'custom_admin/generic_list.html', {
         'items': wrapped_items,
         'model_name_plural': title,
         'add_url': reverse(f'{url_name_base}_add'),
+        'reorder_url': reorder_url,
         'active_tab': active_tab
     })
 
@@ -354,7 +364,7 @@ class ExperienceForm(forms.ModelForm):
 
 @user_passes_test(is_superuser, login_url='admin_login')
 def experience_list(request):
-    items = Experience.objects.all().order_by('-start_date')
+    items = Experience.objects.all().order_by('order', '-start_date')
     return render_generic_list(request, items, 'Experience', 'admin_experience', active_tab='admin_experience')
 
 @user_passes_test(is_superuser, login_url='admin_login')
@@ -377,7 +387,7 @@ class AchievementForm(forms.ModelForm):
 
 @user_passes_test(is_superuser, login_url='admin_login')
 def achievement_list(request):
-    items = Achievement.objects.all()
+    items = Achievement.objects.all().order_by('order', '-date')
     return render_generic_list(request, items, 'Achievements', 'admin_achievement', active_tab='admin_achievement')
 
 @user_passes_test(is_superuser, login_url='admin_login')
@@ -400,7 +410,7 @@ class CertificationForm(forms.ModelForm):
 
 @user_passes_test(is_superuser, login_url='admin_login')
 def certification_list(request):
-    items = Certification.objects.all().order_by('-year')
+    items = Certification.objects.all().order_by('order', '-year')
     return render_generic_list(request, items, 'Certifications', 'admin_certification', active_tab='admin_certification')
 
 @user_passes_test(is_superuser, login_url='admin_login')
@@ -472,3 +482,71 @@ def error_log_clear(request):
         ErrorLog.objects.all().delete()
         messages.success(request, "All error logs cleared.")
     return redirect('admin_error_logs')
+
+
+@user_passes_test(is_superuser, login_url='admin_login')
+def site_settings_edit(request):
+    site_settings = SiteSettings.get_settings()
+    
+    if request.method == 'POST':
+        experience_years = request.POST.get('experience_years', '')
+        projects_count = request.POST.get('projects_count', '')
+        
+        if experience_years and projects_count:
+            site_settings.experience_years = experience_years
+            site_settings.projects_count = projects_count
+            site_settings.save()
+            messages.success(request, "Site settings updated successfully!")
+            return redirect('dashboard')
+        else:
+            messages.error(request, "All fields are required.")
+            
+    return render(request, 'custom_admin/settings_form.html', {
+        'site_settings': site_settings,
+        'active_tab': 'admin_settings'
+    })
+
+
+@user_passes_test(is_superuser, login_url='admin_login')
+def experience_reorder(request):
+    if request.method == 'POST':
+        for key, value in request.POST.items():
+            if key.startswith('order_'):
+                try:
+                    item_id = int(key.split('_')[1])
+                    order_val = int(value)
+                    Experience.objects.filter(pk=item_id).update(order=order_val)
+                except (ValueError, IndexError):
+                    pass
+        messages.success(request, "Experience ordering saved successfully!")
+    return redirect('admin_experience_list')
+
+
+@user_passes_test(is_superuser, login_url='admin_login')
+def achievement_reorder(request):
+    if request.method == 'POST':
+        for key, value in request.POST.items():
+            if key.startswith('order_'):
+                try:
+                    item_id = int(key.split('_')[1])
+                    order_val = int(value)
+                    Achievement.objects.filter(pk=item_id).update(order=order_val)
+                except (ValueError, IndexError):
+                    pass
+        messages.success(request, "Achievement ordering saved successfully!")
+    return redirect('admin_achievement_list')
+
+
+@user_passes_test(is_superuser, login_url='admin_login')
+def certification_reorder(request):
+    if request.method == 'POST':
+        for key, value in request.POST.items():
+            if key.startswith('order_'):
+                try:
+                    item_id = int(key.split('_')[1])
+                    order_val = int(value)
+                    Certification.objects.filter(pk=item_id).update(order=order_val)
+                except (ValueError, IndexError):
+                    pass
+        messages.success(request, "Certification ordering saved successfully!")
+    return redirect('admin_certification_list')

@@ -25,18 +25,21 @@ urlpatterns = [
     path('experience/add/', views.experience_add, name='admin_experience_add'),
     path('experience/<int:pk>/edit/', views.experience_edit, name='admin_experience_edit'),
     path('experience/<int:pk>/delete/', views.experience_delete, name='admin_experience_delete'),
+    path('experience/reorder/', views.experience_reorder, name='admin_experience_reorder'),
 
     # Achievement CRUD
     path('achievements/', views.achievement_list, name='admin_achievement_list'),
     path('achievements/add/', views.achievement_add, name='admin_achievement_add'),
     path('achievements/<int:pk>/edit/', views.achievement_edit, name='admin_achievement_edit'),
     path('achievements/<int:pk>/delete/', views.achievement_delete, name='admin_achievement_delete'),
+    path('achievements/reorder/', views.achievement_reorder, name='admin_achievement_reorder'),
 
     # Certification CRUD
     path('certifications/', views.certification_list, name='admin_certification_list'),
     path('certifications/add/', views.certification_add, name='admin_certification_add'),
     path('certifications/<int:pk>/edit/', views.certification_edit, name='admin_certification_edit'),
     path('certifications/<int:pk>/delete/', views.certification_delete, name='admin_certification_delete'),
+    path('certifications/reorder/', views.certification_reorder, name='admin_certification_reorder'),
 
     # Contact Messages
     path('contact/', views.contact_list, name='admin_contact'),
@@ -47,4 +50,7 @@ urlpatterns = [
     path('errors/', views.error_log_list, name='admin_error_logs'),
     path('errors/<int:pk>/delete/', views.error_log_delete, name='admin_error_log_delete'),
     path('errors/clear/', views.error_log_clear, name='admin_error_log_clear'),
+
+    # Site Settings
+    path('settings/', views.site_settings_edit, name='admin_settings'),
 ]

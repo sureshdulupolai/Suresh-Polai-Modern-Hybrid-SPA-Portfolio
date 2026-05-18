@@ -3,49 +3,131 @@
 {% block title %}Manage {{ model_name_plural }}{% endblock %}
 
 {% block content %}
+{% if reorder_url %}
+<form id="reorder-form" method="POST" action="{{ reorder_url }}">
+    {% csrf_token %}
+{% endif %}
 <div class="bg-white rounded-lg shadow">
-    <div class="px-6 py-4 border-b flex justify-between items-center">
-        <h3 class="font-bold text-gray-800">All {{ model_name_plural }}</h3>
-        <a href="{{ add_url }}"
-            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition-colors text-sm">
-            + Add New
-        </a>
+    <div class="px-6 py-4 border-b flex justify-between items-center bg-gray-50/50">
+        <div>
+            <h3 class="font-bold text-gray-800 text-lg">All {{ model_name_plural }}</h3>
+            {% if reorder_url %}
+            <p class="text-xs text-gray-500">Edit sorting numbers below and click "Save Ordering" to rearrange.</p>
+            {% endif %}
+        </div>
+        <div class="flex items-center space-x-3">
+            {% if reorder_url %}
+            <button type="submit" id="save-ordering-btn" disabled
+                class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition-all transform hover:-translate-y-0.5 text-sm flex items-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                </svg>
+                Save Ordering
+            </button>
+            {% endif %}
+            <a href="{{ add_url }}"
+                class="bg-primary hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-sm transition-all transform hover:-translate-y-0.5 text-sm">
+                + Add New
+            </a>
+        </div>
     </div>
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
             <thead>
                 <tr>
-                    <th class="py-3 px-6 bg-gray-50 font-semibold text-gray-600 text-sm uppercase border-b">Item</th>
-                    <th class="py-3 px-6 bg-gray-50 font-semibold text-gray-600 text-sm uppercase border-b text-right">
+                    <th class="py-3 px-6 bg-gray-50 font-semibold text-gray-500 text-xs uppercase border-b w-16">#</th>
+                    {% if reorder_url %}
+                    <th class="py-3 px-6 bg-gray-50 font-semibold text-gray-500 text-xs uppercase border-b w-28">Sort Order</th>
+                    {% endif %}
+                    <th class="py-3 px-6 bg-gray-50 font-semibold text-gray-500 text-xs uppercase border-b">Item</th>
+                    <th class="py-3 px-6 bg-gray-50 font-semibold text-gray-500 text-xs uppercase border-b text-right">
                         Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in items %}
                 <tr class="border-b last:border-0 hover:bg-gray-50 transition-colors">
+                    <td class="py-4 px-6 text-sm font-semibold text-gray-400">{{ forloop.counter }}</td>
+                    {% if reorder_url %}
+                    <td class="py-4 px-6">
+                        <input type="number" name="order_{{ item.pk }}" value="{{ item.order }}"
+                            class="w-16 px-2 py-1 text-sm bg-gray-50 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary text-gray-800 font-semibold text-center">
+                    </td>
+                    {% endif %}
                     <td class="py-4 px-6 font-medium text-gray-800">{{ item }}</td>
-                    <td class="py-4 px-6 text-right space-x-2">
+                    <td class="py-4 px-6 text-right space-x-3">
                         <a href="{{ item.edit_url }}"
-                            class="text-blue-600 hover:text-blue-800 font-medium text-sm">Edit</a>
+                            class="text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors">Edit</a>
 
-                        <form id="delete-item-{{ item.item.pk }}" action="{{ item.delete_url }}" method="POST"
-                            class="inline">
-                            {% csrf_token %}
-                            <button type="button"
-                                onclick="window.confirmFormSubmit('delete-item-{{ item.item.pk }}', 'Delete this item permanently?')"
-                                class="text-red-600 hover:text-red-800 font-medium text-sm">
-                                Delete
-                            </button>
-                        </form>
+                        <button type="button"
+                            onclick="if(confirm('Are you sure you want to permanently delete this item?')) document.getElementById('delete-item-{{ item.pk }}').submit();"
+                            class="text-red-600 hover:text-red-800 font-medium text-sm transition-colors">
+                            Delete
+                        </button>
                     </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="2" class="text-center py-8 text-gray-500">No records found.</td>
+                    <td colspan="{% if reorder_url %}4{% else %}3{% endif %}" class="text-center py-8 text-gray-500">No records found.</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+{% if reorder_url %}
+</form>
+{% endif %}
+
+{# Hidden delete forms placed outside the reorder form #}
+{% for item in items %}
+<form id="delete-item-{{ item.pk }}" action="{{ item.delete_url }}" method="POST" class="hidden">
+    {% csrf_token %}
+</form>
+{% endfor %}
+
+{% if reorder_url %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const saveBtn = document.getElementById('save-ordering-btn');
+        const orderInputs = document.querySelectorAll('input[name^="order_"]');
+        
+        const initialValues = {};
+        orderInputs.forEach(input => {
+            initialValues[input.name] = input.value;
+        });
+
+        function checkChanges() {
+            let hasChanged = false;
+            orderInputs.forEach(input => {
+                if (input.value !== initialValues[input.name]) {
+                    hasChanged = true;
+                }
+            });
+
+            if (hasChanged) {
+                saveBtn.removeAttribute('disabled');
+            } else {
+                saveBtn.setAttribute('disabled', 'true');
+            }
+        }
+
+        orderInputs.forEach(input => {
+            input.addEventListener('input', checkChanges);
+            input.addEventListener('change', checkChanges);
+        });
+
+        document.getElementById('reorder-form').addEventListener('submit', function() {
+            saveBtn.setAttribute('disabled', 'true');
+            saveBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Saving...
+            `;
+        });
+    });
+</script>
+{% endif %}
 {% endblock %}

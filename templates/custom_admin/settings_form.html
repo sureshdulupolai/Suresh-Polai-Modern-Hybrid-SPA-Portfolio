@@ -1,0 +1,63 @@
+{% extends 'custom_admin/base_admin.html' %}
+
+{% block title %}Site Settings{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <h2 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500">
+            Site Settings
+        </h2>
+        <a href="{% url 'dashboard' %}" class="text-gray-400 hover:text-white transition-colors flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+            </svg>
+            Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-dark-lighter border border-gray-700 rounded-2xl shadow-2xl overflow-hidden relative text-white">
+        <!-- Glow Effect -->
+        <div class="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="p-8 relative z-10">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-400 uppercase tracking-wider ml-1" for="experience_years">
+                        Experience Years (e.g. 2+ Years)
+                    </label>
+                    <input type="text" name="experience_years" id="experience_years" value="{{ site_settings.experience_years }}" required
+                           class="w-full bg-black/20 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                    <p class="text-xs text-gray-500 mt-1 ml-1">This will display as the experience stat on the About page.</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-400 uppercase tracking-wider ml-1" for="projects_count">
+                        Projects Count (e.g. 15+)
+                    </label>
+                    <input type="text" name="projects_count" id="projects_count" value="{{ site_settings.projects_count }}" required
+                           class="w-full bg-black/20 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                    <p class="text-xs text-gray-500 mt-1 ml-1">This will display as the total projects stat on the About page.</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end space-x-4 pt-6 border-t border-gray-800 mt-8">
+                    <a href="{% url 'dashboard' %}"
+                        class="px-6 py-2.5 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white transition-all font-medium">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                        class="px-8 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white shadow-lg shadow-blue-500/20 hover:shadow-blue-500/40 transform hover:-translate-y-0.5 transition-all font-semibold">
+                        Save Settings
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

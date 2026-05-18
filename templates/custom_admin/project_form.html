@@ -178,22 +178,7 @@
                     {% endif %}
                 </div>
 
-                <!-- Featured Toggle -->
-                <div class="flex items-center space-x-3 bg-black/20 p-4 rounded-xl border border-gray-700">
-                    <div
-                        class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                        <input type="checkbox" name="is_featured" id="id_is_featured"
-                            class="absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer peer checked:right-0 checked:bg-blue-500 transition-all duration-200"
-                            {% if form.is_featured.value %}checked{% endif %} />
-                        <label for="id_is_featured"
-                            class="block overflow-hidden h-6 rounded-full bg-gray-600 cursor-pointer peer-checked:bg-blue-900"></label>
-                    </div>
-                    <div>
-                        <label for="id_is_featured" class="text-sm font-bold text-white cursor-pointer">Featured
-                            Project</label>
-                        <p class="text-xs text-gray-500">Show this project on the home page portfolio.</p>
-                    </div>
-                </div>
+
 
                 <!-- Action Buttons -->
                 <div class="flex justify-end space-x-4 pt-4 border-t border-gray-800">
