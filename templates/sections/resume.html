@@ -179,18 +179,20 @@
 
                 <div class="space-y-6">
                     {% for achievement in achievements %}
+                    {% cycle 'yellow' 'blue' 'purple' 'green' 'rose' as color silent %}
                     <div
-                        class="p-6 rounded-3xl border border-gray-100 dark:border-white/5 bg-white/50 dark:bg-card-dark hover:border-yellow-500/30 transition-all duration-300 shadow-sm hover:shadow-md group relative overflow-hidden backdrop-blur-md">
-                        <div class="absolute top-0 left-0 w-1 h-full bg-yellow-500/50"></div>
+                        class="p-6 rounded-3xl border border-gray-100 dark:border-white/5 bg-white/50 dark:bg-card-dark hover:border-{{ color }}-500/30 transition-all duration-300 shadow-sm hover:shadow-md group relative overflow-hidden backdrop-blur-md">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-{{ color }}-500/50"></div>
                         <div class="pl-4">
                             <div class="flex justify-between items-start mb-2">
                                 <h4
-                                    class="text-lg font-bold text-gray-800 dark:text-white group-hover:text-yellow-600 dark:group-hover:text-yellow-400 transition-colors">
+                                    class="text-lg font-bold text-gray-800 dark:text-white group-hover:text-{{ color }}-600 dark:group-hover:text-{{ color }}-400 transition-colors">
                                     {{ achievement.title }}</h4>
-                                <span class="text-xs text-yellow-600 dark:text-yellow-500/70 font-mono bg-yellow-100
-                                dark:bg-yellow-500/10 px-2 py-1 rounded">{{ achievement.date|date:"Y" }}</span>
+                                <span class="text-xs text-{{ color }}-600 dark:text-{{ color }}-500/70 font-mono bg-{{ color }}-100
+                                dark:bg-{{ color }}-500/10 px-2 py-1 rounded">{{ achievement.date|date:"Y" }}</span>
                             </div>
-                            <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{{ achievement.title }}
+                            <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed achievement-desc" data-color="{{ color }}">
+                                {{ achievement.description }}
                             </p>
                         </div>
                     </div>
@@ -221,80 +223,4 @@
         <p id="modalCaption" class="text-white text-center mt-4 text-xl font-semibold"></p>
     </div>
 </div>
-
-<script>
-    // Self-contained logic for this section to handle re-renders if needed
-    (function () {
-        const modal = document.getElementById('imageModal');
-        const modalContent = document.getElementById('modalContent');
-        const modalImage = document.getElementById('modalImage');
-        const modalCaption = document.getElementById('modalCaption');
-        const closeBtn = document.getElementById('closeModal');
-
-        // Move modal to body
-        if (modal && modal.parentElement !== document.body) {
-            document.body.appendChild(modal);
-        }
-
-        function setupTriggers() {
-            const triggers = document.querySelectorAll('.cert-image-trigger');
-            triggers.forEach(trigger => {
-                trigger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const src = trigger.getAttribute('data-src');
-                    const caption = trigger.getAttribute('data-caption');
-                    if (src) openModal(src, caption);
-                });
-            });
-        }
-
-        function openModal(src, caption) {
-            modalImage.src = src;
-            modalCaption.textContent = caption;
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modalContent.classList.remove('scale-95');
-                modalContent.classList.add('scale-100');
-            }, 10);
-        }
-
-        function closeModal() {
-            modal.classList.add('opacity-0');
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-            document.body.style.overflow = '';
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modalImage.src = '';
-            }, 300);
-        }
-
-        if (closeBtn) {
-            // Remove old listeners to prevent duplicates if any (basic check)
-            const newCloseBtn = closeBtn.cloneNode(true);
-            closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
-            newCloseBtn.addEventListener('click', closeModal);
-        }
-
-        if (modal) {
-            const newModal = modal.cloneNode(true);
-            // We need to re-find elements inside the new modal since we cloned it
-            // Actually cloning modal might be too aggressive if it is already in body.
-            // Simpler: Just add listener, duplicate listeners on same element for same function is fine if careful, 
-            // or just use onclick attribute to be safe against multi-binding in SPA. 
-            // Let's stick to simple addEventListener, assuming page reload clears.
-
-            modal.onclick = (e) => {
-                if (e.target === modal) closeModal();
-            };
-        }
-
-        document.onkeydown = (e) => {
-            if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) closeModal();
-        };
-
-        setupTriggers();
-    })();
-</script>
+

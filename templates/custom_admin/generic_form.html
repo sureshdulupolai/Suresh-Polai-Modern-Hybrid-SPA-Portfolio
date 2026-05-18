@@ -90,7 +90,7 @@
 <script>
     // Script to inject Tailwind classes into Django basic widgets
     document.addEventListener('DOMContentLoaded', () => {
-        const inputs = document.querySelectorAll('input[type="text"], input[type="url"], input[type="number"], input[type="email"], input[type="password"], textarea, select');
+        const inputs = document.querySelectorAll('input[type="text"], input[type="url"], input[type="number"], input[type="email"], input[type="password"], input[type="date"], textarea, select');
         inputs.forEach(input => {
             // Check if it's already styled to avoid double styling if we manually customized some
             if (!input.classList.contains('bg-black/20')) {

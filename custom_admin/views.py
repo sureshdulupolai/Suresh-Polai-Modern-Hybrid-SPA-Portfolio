@@ -384,6 +384,9 @@ class AchievementForm(forms.ModelForm):
     class Meta:
         model = Achievement
         fields = '__all__'
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }
 
 @user_passes_test(is_superuser, login_url='admin_login')
 def achievement_list(request):
