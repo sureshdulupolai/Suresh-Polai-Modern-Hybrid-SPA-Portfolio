@@ -14,6 +14,13 @@ from pathlib import Path
 import dj_database_url
 import os
 
+# Load environment variables from .env file if present
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +32,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-manual-creation-key-change-in-production'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() == 'true'
+
+if os.environ.get('RENDER') == 'true':
+    DEBUG = False
 
 ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1', 'suresh-polai.onrender.com']
 
@@ -93,10 +103,13 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # }
 
 # Database configuration: SQLite for local development, PostgreSQL (or other configured DB) for live Render environment
-if os.environ.get('RENDER') == 'true' or os.environ.get('DATABASE_URL'):
+database_url = os.environ.get('DATABASE_URL')
+is_internal_render_db = database_url and 'dpg-' in database_url and '.render.com' not in database_url and os.environ.get('RENDER') != 'true'
+
+if (os.environ.get('RENDER') == 'true' or database_url) and not is_internal_render_db:
     DATABASES = {
         'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL')
+            default=database_url
         )
     }
 else:

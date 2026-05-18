@@ -65,7 +65,7 @@ def index(request):
             projects = Project.objects.all().order_by('order', '-created_at')
             return render(request, 'sections/projects.html', {'projects': projects})
         elif active_section == 'experience':
-            experiences = Experience.objects.all().order_by('-start_date')
+            experiences = Experience.objects.all().order_by('order', '-start_date')
             return render(request, 'sections/experience.html', {'experiences': experiences})
         elif active_section == 'skills':
             skills = Skill.objects.all()
@@ -83,10 +83,10 @@ def index(request):
                     categories[skill.category] = []
                 categories[skill.category].append(skill)
             return render(request, 'sections/resume.html', {
-                'experiences': Experience.objects.all().order_by('-start_date'),
+                'experiences': Experience.objects.all().order_by('order', '-start_date'),
                 'categories': categories,
-                'achievements': Achievement.objects.all(),
-                'certifications': Certification.objects.all().order_by('-year')
+                'achievements': Achievement.objects.all().order_by('order', '-date'),
+                'certifications': Certification.objects.all().order_by('order', '-year')
             })
         
         # Simple static sections
@@ -106,10 +106,10 @@ def index(request):
             
         return {
             'projects': Project.objects.all().order_by('order', '-created_at'),
-            'experiences': Experience.objects.all().order_by('-start_date'),
+            'experiences': Experience.objects.all().order_by('order', '-start_date'),
             'categories': categories,
-            'achievements': Achievement.objects.all(),
-            'certifications': Certification.objects.all().order_by('-year'),
+            'achievements': Achievement.objects.all().order_by('order', '-date'),
+            'certifications': Certification.objects.all().order_by('order', '-year'),
             'site_settings': SiteSettings.get_settings(),
         }
 
