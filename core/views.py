@@ -62,9 +62,9 @@ def index(request):
     
     if request.headers.get('X-SPA-Request') == 'true':
         if active_section == 'projects':
-            projects = Project.objects.filter(is_featured=True).order_by('-created_at')
+            projects = Project.objects.filter(is_featured=True).order_by('order', '-created_at')
             if not projects.exists():
-                projects = Project.objects.all().order_by('-created_at')
+                projects = Project.objects.all().order_by('order', '-created_at')
             return render(request, 'sections/projects.html', {'projects': projects})
         elif active_section == 'experience':
             experiences = Experience.objects.all().order_by('-start_date')
@@ -107,7 +107,7 @@ def index(request):
             categories[skill.category].append(skill)
             
         return {
-            'projects': Project.objects.filter(is_featured=True).order_by('-created_at') or Project.objects.all().order_by('-created_at'),
+            'projects': Project.objects.filter(is_featured=True).order_by('order', '-created_at') or Project.objects.all().order_by('order', '-created_at'),
             'experiences': Experience.objects.all().order_by('-start_date'),
             'categories': categories,
             'achievements': Achievement.objects.all(),
@@ -135,10 +135,10 @@ def get_section(request, section_name):
         })
     
     elif section_name == 'projects':
-        projects = Project.objects.filter(is_featured=True).order_by('-created_at')
+        projects = Project.objects.filter(is_featured=True).order_by('order', '-created_at')
         if not projects.exists(): 
              # Fallback if no featured, show all or just empty
-             projects = Project.objects.all().order_by('-created_at')
+             projects = Project.objects.all().order_by('order', '-created_at')
         return render(request, 'sections/projects.html', {'projects': projects})
     
     elif section_name == 'experience':

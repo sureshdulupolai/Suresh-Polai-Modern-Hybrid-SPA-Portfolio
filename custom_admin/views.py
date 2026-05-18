@@ -186,8 +186,22 @@ def dashboard(request):
 
 @user_passes_test(is_superuser, login_url='admin_login')
 def project_list(request):
-    projects = Project.objects.all().order_by('-created_at')
+    projects = Project.objects.all().order_by('order', '-created_at')
     return render(request, 'custom_admin/project_list.html', {'projects': projects, 'active_tab': 'projects'})
+
+@user_passes_test(is_superuser, login_url='admin_login')
+def projects_reorder(request):
+    if request.method == 'POST':
+        for key, value in request.POST.items():
+            if key.startswith('order_'):
+                try:
+                    project_id = int(key.split('_')[1])
+                    order_val = int(value)
+                    Project.objects.filter(pk=project_id).update(order=order_val)
+                except (ValueError, IndexError):
+                    pass
+        messages.success(request, "Project ordering saved successfully!")
+    return redirect('admin_projects')
 
 @user_passes_test(is_superuser, login_url='admin_login')
 def project_create(request):

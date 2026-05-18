@@ -12,6 +12,7 @@ urlpatterns = [
     path('projects/add/', views.project_create, name='admin_project_add'),
     path('projects/<int:pk>/edit/', views.project_edit, name='admin_project_edit'),
     path('projects/<int:pk>/delete/', views.project_delete, name='admin_project_delete'),
+    path('projects/reorder/', views.projects_reorder, name='admin_projects_reorder'),
 
     # Skill CRUD
     path('skills/', views.skill_list, name='admin_skill_list'),

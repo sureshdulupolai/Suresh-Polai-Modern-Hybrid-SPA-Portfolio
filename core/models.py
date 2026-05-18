@@ -9,6 +9,10 @@ class Project(models.Model):
     image = models.ImageField(upload_to='projects/')
     created_at = models.DateTimeField(auto_now_add=True)
     is_featured = models.BooleanField(default=False)
+    order = models.IntegerField(default=0, help_text="Ordering index (lower numbers show first)")
+
+    class Meta:
+        ordering = ['order', '-created_at']
 
     def __str__(self):
         return self.title
