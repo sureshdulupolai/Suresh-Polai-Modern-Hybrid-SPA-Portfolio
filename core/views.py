@@ -278,3 +278,11 @@ def sitemap_view(request):
         xml_content += '  </url>\n'
     xml_content += '</urlset>'
     return HttpResponse(xml_content, content_type="application/xml")
+
+@require_GET
+def google_verification_view(request):
+    """
+    Serves the Google Search Console HTML verification file dynamic content.
+    """
+    content = "google-site-verification: google5c65749617527eda.html"
+    return HttpResponse(content, content_type="text/html")
