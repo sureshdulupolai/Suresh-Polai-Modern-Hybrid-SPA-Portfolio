@@ -56,6 +56,7 @@ The project features standard-compliant **Google-grade technical search engine o
 *   **🔗 Canonical URL Tags**: Injects explicit canonical link headers to prevent duplicate-content indexing penalties.
 *   **🌐 Premium OpenGraph & Twitter Cards**: Leverages high-definition social open graphs for rich preview cards when links are shared on LinkedIn, WhatsApp, Twitter/X, and Slack.
 *   **🗂️ Rich JSON-LD Structured Graph Schema**: Delivers comprehensive structural data schemas including **Person** (expertise, credentials, and social indicators), **WebSite** properties, and local **ProfessionalService** descriptors directly to crawler algorithms.
+*   **🔑 Dynamic Google Verification Token (`/google[verification_hash].html`)**: Employs a dynamic backend router that automatically serves the Google Search Console verification token without requiring manual uploading of static HTML files to Render, keeping production clean.
 
 ---
 
