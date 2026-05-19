@@ -37,8 +37,6 @@ def index(request):
 
     # --- ANALYTICS TRACKING ---
     if not is_bot and not request.headers.get('X-SPA-Request') == 'true' and not request.path.startswith('/custom-admin'):
-        # Only track full page loads (initial visits) or maybe specific interactions if desired.
-        # We'll track all non-SPA requests to the main index as "Visits"
         
         referer = request.META.get('HTTP_REFERER', '')
         source = 'Direct'
