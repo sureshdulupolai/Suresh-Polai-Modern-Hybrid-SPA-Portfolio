@@ -45,6 +45,20 @@ The system automatically detects your environment using environment variables (l
 
 ---
 
+## 🔍 Technical SEO & AI Search Optimization (New)
+
+The project features standard-compliant **Google-grade technical search engine optimization (SEO)** and is fully prepared for generative AI search engines (such as Google AI Overview, ChatGPT search, Perplexity AI, and Gemini):
+
+*   **🤖 Automated Search Crawler Whitelist (`BotProtectionMiddleware`)**: Bypasses security checks for certified search engines and AI crawl bots (like `Googlebot`, `Bingbot`, `Applebot`, `GPTBot`, `PerplexityBot`, etc.), ensuring zero crawling restrictions while keeping scanner protection robust.
+*   **🗺️ Dynamic Runtime Sitemap Feed (`/sitemap.xml`)**: Generates structured dynamic sitemaps instantly at runtime with correct page priorities, keeping search indexes fully synchronized.
+*   **📄 Dynamic Crawler Directives (`/robots.txt`)**: Explicitly controls search indexes, provides sitemap directions, and blocks automated scans of private directories like `/custom-admin/`.
+*   **🏷️ Dynamic Metadata Head Injector**: Employs dynamic server-rendered `<title>` and `<meta name="description">` blocks matching active routes during initial loading.
+*   **🔗 Canonical URL Tags**: Injects explicit canonical link headers to prevent duplicate-content indexing penalties.
+*   **🌐 Premium OpenGraph & Twitter Cards**: Leverages high-definition social open graphs for rich preview cards when links are shared on LinkedIn, WhatsApp, Twitter/X, and Slack.
+*   **🗂️ Rich JSON-LD Structured Graph Schema**: Delivers comprehensive structural data schemas including **Person** (expertise, credentials, and social indicators), **WebSite** properties, and local **ProfessionalService** descriptors directly to crawler algorithms.
+
+---
+
 ## 🔥 Key Features
 
 - ⚡ **Hybrid SPA Architecture** (SEO-friendly initial load + AJAX dynamic content updates)

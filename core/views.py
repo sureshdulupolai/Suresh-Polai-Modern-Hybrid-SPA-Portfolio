@@ -234,3 +234,47 @@ def contact_submit(request):
         response.set_cookie('device_id', device_id, max_age=31536000, httponly=True, samesite='Lax')
     
     return response
+
+from django.views.decorators.http import require_GET
+from django.http import HttpResponse
+
+@require_GET
+def robots_view(request):
+    """
+    Renders a standard-compliant robots.txt.
+    Bypasses security protections for friendly bots and directs crawlers to sitemap.xml.
+    """
+    domain = request.build_absolute_uri('/')
+    content = f"""User-agent: *
+Allow: /
+Disallow: /custom-admin/
+
+Sitemap: {domain}sitemap.xml
+"""
+    return HttpResponse(content, content_type="text/plain")
+
+@require_GET
+def sitemap_view(request):
+    """
+    Generates a clean, fully-dynamic sitemap.xml at runtime.
+    Lists key SPA section pages and updates their relative crawler weights.
+    """
+    domain = request.build_absolute_uri('/')
+    urls = [
+        {'loc': f"{domain}", 'changefreq': 'daily', 'priority': '1.0'},
+        {'loc': f"{domain}about/", 'changefreq': 'weekly', 'priority': '0.8'},
+        {'loc': f"{domain}projects/", 'changefreq': 'weekly', 'priority': '0.9'},
+        {'loc': f"{domain}resume/", 'changefreq': 'weekly', 'priority': '0.7'},
+        {'loc': f"{domain}contact/", 'changefreq': 'weekly', 'priority': '0.8'},
+    ]
+    
+    xml_content = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    xml_content += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+    for url in urls:
+        xml_content += '  <url>\n'
+        xml_content += f"    <loc>{url['loc']}</loc>\n"
+        xml_content += f"    <changefreq>{url['changefreq']}</changefreq>\n"
+        xml_content += f"    <priority>{url['priority']}</priority>\n"
+        xml_content += '  </url>\n'
+    xml_content += '</urlset>'
+    return HttpResponse(xml_content, content_type="application/xml")

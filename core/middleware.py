@@ -105,11 +105,23 @@ class BotProtectionMiddleware:
             r'(sqlmap|nikto|nmap|masscan|zgrab|acunetix|dirbuster|gobuster|w3af|netsparker|hydra|zaproxy|commix|arachni|n-stealth|scrapy|ahrefsbot|semrushbot)',
             re.IGNORECASE
         )
+        # Friendly Search & AI Engine User-Agent keywords to guarantee they are never blocked
+        self.friendly_bots = re.compile(
+            r'(googlebot|bingbot|applebot|yandex|baiduspider|duckduckgo|gptbot|chatgpt|perplexity|gemini|anthropic|claude|cohere|facebookexternalhit)',
+            re.IGNORECASE
+        )
 
     def __call__(self, request):
         user_agent = request.META.get('HTTP_USER_AGENT', '')
-        if user_agent and self.bot_regex.search(user_agent):
-            return HttpResponseForbidden("Access Denied: Security Scanner or Unapproved User Agent Detected.")
+        if user_agent:
+            # 1. If it is a known friendly search or AI crawler, instantly allow access
+            if self.friendly_bots.search(user_agent):
+                return self.get_response(request)
+            
+            # 2. Otherwise, check against malicious security scanner signatures
+            if self.bot_regex.search(user_agent):
+                return HttpResponseForbidden("Access Denied: Security Scanner or Unapproved User Agent Detected.")
+                
         return self.get_response(request)
 
 class SecurityHeadersMiddleware:
