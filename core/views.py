@@ -64,6 +64,12 @@ def index(request):
         if active_section == 'projects':
             projects = Project.objects.all().order_by('order', '-created_at')
             return render(request, 'sections/projects.html', {'projects': projects})
+        elif active_section == 'about':
+            return render(request, 'sections/about.html', {
+                'site_settings': SiteSettings.get_settings(),
+                'achievements': Achievement.objects.all().order_by('order', '-date'),
+                'certifications': Certification.objects.all().order_by('order', '-year'),
+            })
         elif active_section == 'experience':
             experiences = Experience.objects.all().order_by('order', '-start_date')
             return render(request, 'sections/experience.html', {'experiences': experiences})

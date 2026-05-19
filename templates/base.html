@@ -188,11 +188,60 @@
                 background-position: 0% 50%;
             }
         }
+
+        /* Custom Premium Loading Animations */
+        @keyframes spin-reverse {
+            0% {
+                transform: rotate(360deg);
+            }
+            100% {
+                transform: rotate(0deg);
+            }
+        }
+        .animate-spin-reverse {
+            animation: spin-reverse 1.2s linear infinite;
+        }
+
+        /* Smooth fade-in/out for loading views */
+        .page-fade-out {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .page-fade-in {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
     </style>
 </head>
 
 <body
-    class="bg-gray-50 dark:bg-dark text-gray-800 dark:text-gray-200 font-sans selection:bg-primary selection:text-white">
+    class="bg-gray-50 dark:bg-dark text-gray-800 dark:text-gray-200 font-sans selection:bg-primary selection:text-white overflow-hidden">
+
+    <!-- Premium Global Preloader -->
+    <div id="global-preloader" class="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-gray-50 dark:bg-dark transition-all duration-700 ease-in-out">
+        <div class="relative flex flex-col items-center">
+            <!-- Glowing background aura -->
+            <div class="absolute -inset-10 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-full blur-3xl opacity-60 animate-pulse"></div>
+
+            <!-- Premium Pulsing Logo -->
+            <div class="text-3xl md:text-4xl font-bold tracking-tighter mb-8 animate-pulse text-center relative z-10">
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Suresh</span>
+                <span class="text-gray-800 dark:text-white">Polai.</span>
+            </div>
+            
+            <!-- Glowing Double Ring Spinner -->
+            <div class="relative w-20 h-20 relative z-10">
+                <div class="absolute inset-0 rounded-full border-4 border-primary/10"></div>
+                <div class="absolute inset-0 rounded-full border-4 border-t-primary border-r-transparent animate-spin"></div>
+                <div class="absolute inset-2 rounded-full border-4 border-b-secondary border-l-transparent animate-spin-reverse"></div>
+            </div>
+            
+            <!-- Status message -->
+            <p class="mt-8 text-xs font-semibold text-gray-400 dark:text-gray-500 tracking-[0.2em] uppercase animate-pulse relative z-10">Loading Experience</p>
+        </div>
+    </div>
 
     <!-- 3D Background Canvas -->
     <div id="canvas-container"></div>
@@ -263,19 +312,19 @@
         <div id="mobile-menu"
             class="hidden md:hidden absolute top-20 right-6 w-64 z-50 bg-white/90 dark:bg-dark/95 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl transition-all duration-300 opacity-0 transform scale-95 origin-top-right overflow-hidden">
             <div class="flex flex-col py-4">
-                <a href="/"
-                    class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0">Home</a>
-                <a href="/about"
-                    class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
+                <a href="/" data-link
+                    class="mobile-link px-6 py-3 text-lg font-bold hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0 {% if active_section == 'home' or not active_section %}text-primary{% else %}text-gray-800 dark:text-white{% endif %}">Home</a>
+                <a href="/about" data-link
+                    class="mobile-link px-6 py-3 text-lg font-bold hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0 {% if active_section == 'about' %}text-primary{% else %}text-gray-800 dark:text-white{% endif %}"
                     style="transition-delay: 50ms;">About</a>
-                <a href="/projects"
-                    class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
+                <a href="/projects" data-link
+                    class="mobile-link px-6 py-3 text-lg font-bold hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0 {% if active_section == 'projects' %}text-primary{% else %}text-gray-800 dark:text-white{% endif %}"
                     style="transition-delay: 100ms;">Projects</a>
-                <a href="/resume"
-                    class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
+                <a href="/resume" data-link
+                    class="mobile-link px-6 py-3 text-lg font-bold hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0 {% if active_section == 'resume' %}text-primary{% else %}text-gray-800 dark:text-white{% endif %}"
                     style="transition-delay: 150ms;">Resume</a>
-                <a href="/contact"
-                    class="mobile-link px-6 py-3 text-lg font-bold text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0"
+                <a href="/contact" data-link
+                    class="mobile-link px-6 py-3 text-lg font-bold hover:bg-gray-100 dark:hover:bg-white/5 transition-colors transform translate-x-4 opacity-0 {% if active_section == 'contact' %}text-primary{% else %}text-gray-800 dark:text-white{% endif %}"
                     style="transition-delay: 200ms;">Contact</a>
 
                 {% if user.is_authenticated and user.is_superuser %}
@@ -297,7 +346,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main id="main-content" class="pt-12 md:pt-14 min-h-[85vh] relative z-10">
+    <main id="main-content" class="pt-12 md:pt-14 min-h-[85vh] relative z-10 overflow-x-hidden">
         {% block content %}
         {% endblock %}
     </main>
@@ -416,7 +465,10 @@
         }
 
         // Init Theme
-        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        const isMobileDevice = window.innerWidth < 768;
+        if (localStorage.theme === 'dark' || 
+            (!('theme' in localStorage) && isMobileDevice) || 
+            (!('theme' in localStorage) && !isMobileDevice && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             html.classList.add('dark');
         } else {
             html.classList.remove('dark');
@@ -689,6 +741,24 @@
                     indicator.style.opacity = '1';
                 }, 50);
             }
+
+            // 🌟 Mobile Menu Link Active Highlighting
+            const mobileLinks = document.querySelectorAll('#mobile-menu a.mobile-link');
+            mobileLinks.forEach(link => {
+                let href = link.getAttribute('href') || '';
+                let hrefPath = href.replace(/^\/|\/$/g, '');
+                if (!hrefPath) {
+                    hrefPath = 'home';
+                }
+                const isMatch = (hrefPath === currentPath);
+                if (isMatch) {
+                    link.classList.add('text-primary');
+                    link.classList.remove('text-gray-800', 'dark:text-white');
+                } else {
+                    link.classList.remove('text-primary');
+                    link.classList.add('text-gray-800', 'dark:text-white');
+                }
+            });
         };
 
         // 🌟 SPA Dynamic Page Router & Transition Logic (Self-Contained to Avoid Cache Glitches)
@@ -701,7 +771,13 @@
             const app = document.getElementById('main-content');
             if (!app) return;
             
-            app.innerHTML = '<div class="flex justify-center items-center h-64"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div></div>';
+            // 1. Show the global full-screen preloader (re-using the same one!)
+            if (typeof window.showGlobalPreloader === 'function') {
+                window.showGlobalPreloader();
+            }
+            
+            // Record start time to guarantee a satisfying display duration (minimum 1 second)
+            const startTime = Date.now();
 
             try {
                 const response = await fetch(url, {
@@ -712,6 +788,8 @@
 
                 if (response.ok) {
                     const html = await response.text();
+                    
+                    // Insert content under the covered screen
                     app.innerHTML = html;
                     window.scrollTo(0, 0);
                     initializeAnimations();
@@ -724,6 +802,17 @@
             } catch (error) {
                 console.error('Error loading content:', error);
                 app.innerHTML = '<div class="min-h-screen flex items-center justify-center"><h1 class="text-2xl font-bold text-red-500">Error loading content</h1></div>';
+            } finally {
+                // Calculate elapsed time and enforce a minimum loading display of 1000ms
+                const elapsedTime = Date.now() - startTime;
+                const remainingTime = Math.max(0, 1000 - elapsedTime);
+                
+                await new Promise(resolve => setTimeout(resolve, remainingTime));
+
+                // 3. Smoothly fade out the global preloader to reveal new content
+                if (typeof window.hideGlobalPreloader === 'function') {
+                    window.hideGlobalPreloader();
+                }
             }
         }
 
@@ -899,6 +988,9 @@
                 e.preventDefault();
                 const url = link.getAttribute('href');
                 navigateTo(url);
+                if (link.classList.contains('mobile-link') && typeof closeMenu === 'function') {
+                    closeMenu();
+                }
             }
         }
 
@@ -906,10 +998,39 @@
             loadContent(window.location.pathname);
         });
 
+        // 🌟 Reusable Premium Preloader Controllers
+        window.hideGlobalPreloader = function() {
+            const preloader = document.getElementById('global-preloader');
+            if (preloader) {
+                preloader.classList.add('opacity-0', 'pointer-events-none');
+                preloader.style.transform = 'scale(1.05)';
+                document.body.classList.remove('overflow-hidden');
+            }
+        };
+
+        window.showGlobalPreloader = function() {
+            const preloader = document.getElementById('global-preloader');
+            if (preloader) {
+                document.body.classList.add('overflow-hidden');
+                preloader.style.transform = 'scale(1)';
+                preloader.classList.remove('opacity-0', 'pointer-events-none');
+            }
+        };
+
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initApp);
         } else {
             initApp();
+        }
+
+        // Hide preloader when window fully loaded
+        if (document.readyState === 'complete') {
+            setTimeout(hideGlobalPreloader, 100);
+        } else {
+            window.addEventListener('load', () => {
+                setTimeout(hideGlobalPreloader, 200);
+            });
+            setTimeout(hideGlobalPreloader, 3500); // safety fallback
         }
 
         // Watch for SPA DOM updates and immediately re-initialize
