@@ -60,6 +60,25 @@ The project features standard-compliant **Google-grade technical search engine o
 
 ---
 
+## 📊 Advanced Analytics & Global Settings Engine (New)
+
+The website features a production-grade, privacy-respecting analytics suite and database-driven global settings configuration:
+
+*   **📈 Dynamic Portfolio Global Stats (`SiteSettings`)**: The landing page (Hero section) and the About page stats are fully database-driven and synchronized in real-time. You can control `Projects Count`, `Satisfaction Rate`, and `Experience Years` directly from the Custom Admin settings dashboard without redeploying code.
+*   **👥 Device-Level Unique Visitor Tracking**: Enforces high-fidelity unique user tracking using secure `device_id` cookie identifiers:
+    - Automatically generates and assigns a cryptographically secure UUID token on a user's initial visit.
+    - Persists the unique device identity across sessions via `HTTPOnly` and `SameSite=Lax` cookies.
+*   **🗄️ Lifetime Visitor Analytics (`UniqueVisitor` Model)**: Records lifetime unique device interactions inside a dedicated database cache:
+    - Captures the exact timestamp of their `first_visited` and `last_visited` interactions.
+    - Counts cumulative interactions (`visit_count`) per device to distinguish between new and recurring visitors.
+*   **🤖 Silent Bot & Uptime Monitor Filtering**: Automatically screens incoming user-agents to filter out monitoring pings and automated crawls (like `UptimeRobot`, `Pingdom`, `Better Uptime`, `StatusCake`, `Googlebot`, custom HTTP scripts, etc.) from counting toward your analytics:
+    - **No Request Blocking:** Automated monitoring requests are served a complete `HTTP 200 OK` HTML render to prevent your hosting environment (like Render) from sleeping or spinning down.
+    - **No Analytics Pollution:** Database insertion of logs and unique visitor increments are completely bypassed for bots, keeping your database compact, clean, and highly performant.
+*   **🎨 Live Stats Monitor**: Displays real-time "Total Views", "Unique Visitors", and "Views Today" beautifully inside the Admin Dashboard using harmonized color palettes and responsive layouts.
+*   **🔄 Zero-Ops Historical Data Backfill Migration (`0013_backfill_unique_visitors`)**: Automatically recovers and updates historical analytics logs from past deployments on first startup. It groups past visits by their User-Agent footprint, generates deterministic UUID device keys, and populates the `UniqueVisitor` model safely without requiring any manual terminal commands on Render.
+
+---
+
 ## 🔥 Key Features
 
 - ⚡ **Hybrid SPA Architecture** (SEO-friendly initial load + AJAX dynamic content updates)

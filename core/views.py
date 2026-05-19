@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Project, Experience, Skill, SiteVisit, Achievement, Certification, SiteSettings
+from .models import Project, Experience, Skill, SiteVisit, Achievement, Certification, SiteSettings, UniqueVisitor
 from django.http import Http404
 
 def index(request):
@@ -14,13 +14,33 @@ def index(request):
     path_segments = path.split('/')
     active_section = path_segments[0] if path and path_segments else 'home'
     
+    # 1. Bot & Monitoring Filter
+    user_agent = request.META.get('HTTP_USER_AGENT', '')
+    user_agent_lower = user_agent.lower()
+    
+    bot_keywords = [
+        'uptimerobot', 'googlebot', 'bingbot', 'yandexbot', 'baiduspider', 
+        'crawler', 'spider', 'robot', 'bot', 'pingdom', 'betteruptime', 
+        'statuscake', 'uptime', 'monitoring', 'curl', 'wget', 'python-requests',
+        'node-superagent', 'axios', 'go-http-client', 'java/', 'http-client',
+        'postman', 'lighthouse', 'gtmetrix', 'semrushbot', 'ahrefsbot', 'siteaudit'
+    ]
+    is_bot = not user_agent_lower or any(keyword in user_agent_lower for keyword in bot_keywords)
+
+    # 2. Device check / generation (skip for bots to optimize CPU)
+    import uuid
+    device_id = request.COOKIES.get('device_id')
+    set_cookie = False
+    if not is_bot and not device_id:
+        device_id = str(uuid.uuid4())
+        set_cookie = True
+
     # --- ANALYTICS TRACKING ---
-    if not request.headers.get('X-SPA-Request') == 'true' and not request.path.startswith('/custom-admin'):
+    if not is_bot and not request.headers.get('X-SPA-Request') == 'true' and not request.path.startswith('/custom-admin'):
         # Only track full page loads (initial visits) or maybe specific interactions if desired.
         # We'll track all non-SPA requests to the main index as "Visits"
         
         referer = request.META.get('HTTP_REFERER', '')
-        user_agent = request.META.get('HTTP_USER_AGENT', '')
         source = 'Direct'
         
         if 'whatsapp' in referer.lower():
@@ -52,8 +72,18 @@ def index(request):
             SiteVisit.objects.create(
                 source=source,
                 path=request.path,
-                user_agent=user_agent
+                user_agent=user_agent,
+                device_id=device_id
             )
+            
+            # Record/Update UniqueVisitor
+            visitor, created = UniqueVisitor.objects.get_or_create(
+                device_id=device_id,
+                defaults={'visit_count': 1}
+            )
+            if not created:
+                visitor.visit_count += 1
+                visitor.save()
     # --------------------------
 
     # Map paths to template names if they differ, or strict 1-to-1
@@ -63,16 +93,16 @@ def index(request):
     if request.headers.get('X-SPA-Request') == 'true':
         if active_section == 'projects':
             projects = Project.objects.all().order_by('order', '-created_at')
-            return render(request, 'sections/projects.html', {'projects': projects})
+            response = render(request, 'sections/projects.html', {'projects': projects})
         elif active_section == 'about':
-            return render(request, 'sections/about.html', {
+            response = render(request, 'sections/about.html', {
                 'site_settings': SiteSettings.get_settings(),
                 'achievements': Achievement.objects.all().order_by('order', '-date'),
                 'certifications': Certification.objects.all().order_by('order', '-year'),
             })
         elif active_section == 'experience':
             experiences = Experience.objects.all().order_by('order', '-start_date')
-            return render(request, 'sections/experience.html', {'experiences': experiences})
+            response = render(request, 'sections/experience.html', {'experiences': experiences})
         elif active_section == 'skills':
             skills = Skill.objects.all()
             categories = {}
@@ -80,7 +110,7 @@ def index(request):
                 if skill.category not in categories:
                     categories[skill.category] = []
                 categories[skill.category].append(skill)
-            return render(request, 'sections/skills.html', {'categories': categories})
+            response = render(request, 'sections/skills.html', {'categories': categories})
         elif active_section == 'resume':
             skills = Skill.objects.all()
             categories = {}
@@ -88,18 +118,29 @@ def index(request):
                 if skill.category not in categories:
                     categories[skill.category] = []
                 categories[skill.category].append(skill)
-            return render(request, 'sections/resume.html', {
+            response = render(request, 'sections/resume.html', {
                 'experiences': Experience.objects.all().order_by('order', '-start_date'),
                 'categories': categories,
                 'achievements': Achievement.objects.all().order_by('order', '-date'),
                 'certifications': Certification.objects.all().order_by('order', '-year')
             })
+        else:
+            # Simple static sections
+            if active_section == 'home':
+                response = render(request, 'sections/hero.html', {
+                    'site_settings': SiteSettings.get_settings()
+                })
+            else:
+                try:
+                    response = render(request, f'sections/{active_section}.html')
+                except:
+                    response = render(request, 'sections/hero.html', {
+                        'site_settings': SiteSettings.get_settings()
+                    }) # Fallback
         
-        # Simple static sections
-        try:
-            return render(request, f'sections/{active_section}.html')
-        except:
-            return render(request, 'sections/hero.html') # Fallback
+        if set_cookie:
+            response.set_cookie('device_id', device_id, max_age=31536000, httponly=True, samesite='Lax')
+        return response
     
     # Context data helpers
     def get_common_context():
@@ -123,7 +164,10 @@ def index(request):
     context = {'active_section': active_section}
     context.update(get_common_context())
         
-    return render(request, 'index.html', context)
+    response = render(request, 'index.html', context)
+    if set_cookie:
+        response.set_cookie('device_id', device_id, max_age=31536000, httponly=True, samesite='Lax')
+    return response
 
 def get_section(request, section_name):
     """
@@ -131,7 +175,9 @@ def get_section(request, section_name):
     """
     if section_name == 'home':
         # Hero section
-        return render(request, 'sections/hero.html')
+        return render(request, 'sections/hero.html', {
+            'site_settings': SiteSettings.get_settings()
+        })
     
     elif section_name == 'about':
         return render(request, 'sections/about.html', {

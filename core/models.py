@@ -74,9 +74,20 @@ class SiteVisit(models.Model):
     source = models.CharField(max_length=50, default='Direct')
     path = models.CharField(max_length=200)
     user_agent = models.TextField(blank=True, null=True)
+    device_id = models.CharField(max_length=100, blank=True, null=True)
 
     def __str__(self):
         return f"Visit from {self.source} at {self.timestamp}"
+
+
+class UniqueVisitor(models.Model):
+    device_id = models.CharField(max_length=100, unique=True)
+    first_visited = models.DateTimeField(auto_now_add=True)
+    last_visited = models.DateTimeField(auto_now=True)
+    visit_count = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f"Visitor {self.device_id[:8]} ({self.visit_count} visits)"
 
 class ContactSubmission(models.Model):
     STATUS_CHOICES = [
@@ -110,6 +121,7 @@ class ErrorLog(models.Model):
 class SiteSettings(models.Model):
     experience_years = models.CharField(max_length=50, default="2+")
     projects_count = models.CharField(max_length=50, default="15+")
+    satisfaction_rate = models.CharField(max_length=50, default="100%")
 
     class Meta:
         verbose_name = "Site Settings"

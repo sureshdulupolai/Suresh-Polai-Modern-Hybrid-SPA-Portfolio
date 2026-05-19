@@ -42,7 +42,16 @@
                     </label>
                     <input type="text" name="projects_count" id="projects_count" value="{{ site_settings.projects_count }}" required
                            class="w-full bg-black/20 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
-                    <p class="text-xs text-gray-500 mt-1 ml-1">This will display as the total projects stat on the About page.</p>
+                    <p class="text-xs text-gray-500 mt-1 ml-1">This will display as the total projects stat on the About and Home page.</p>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-sm font-medium text-gray-400 uppercase tracking-wider ml-1" for="satisfaction_rate">
+                        Satisfaction Rate (e.g. 100%)
+                    </label>
+                    <input type="text" name="satisfaction_rate" id="satisfaction_rate" value="{{ site_settings.satisfaction_rate }}" required
+                           class="w-full bg-black/20 border border-gray-700 rounded-xl py-3 px-4 text-white placeholder-gray-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all">
+                    <p class="text-xs text-gray-500 mt-1 ml-1">This will display as the satisfaction stat on the Home page.</p>
                 </div>
 
                 <!-- Action Buttons -->

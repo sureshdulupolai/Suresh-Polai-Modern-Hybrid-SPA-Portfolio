@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from core.models import Project, Skill, Experience, Achievement, Certification, SiteVisit, ContactSubmission, ErrorLog, SiteSettings
+from core.models import Project, Skill, Experience, Achievement, Certification, SiteVisit, ContactSubmission, ErrorLog, SiteSettings, UniqueVisitor
 
 # Views for Admin Panel
 
@@ -165,6 +165,7 @@ def logout_view(request):
 def dashboard(request):
     # Analytics Logic
     total_views = SiteVisit.objects.count()
+    unique_visitors = UniqueVisitor.objects.count()
     
     # Views today
     today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -178,6 +179,7 @@ def dashboard(request):
         'total_skills': Skill.objects.count(),
         'recent_projects': Project.objects.order_by('-created_at')[:5],
         'total_views': total_views,
+        'unique_visitors': unique_visitors,
         'views_today': views_today,
         'source_stats': source_stats,
         'active_tab': 'dashboard'
@@ -494,10 +496,12 @@ def site_settings_edit(request):
     if request.method == 'POST':
         experience_years = request.POST.get('experience_years', '')
         projects_count = request.POST.get('projects_count', '')
+        satisfaction_rate = request.POST.get('satisfaction_rate', '')
         
-        if experience_years and projects_count:
+        if experience_years and projects_count and satisfaction_rate:
             site_settings.experience_years = experience_years
             site_settings.projects_count = projects_count
+            site_settings.satisfaction_rate = satisfaction_rate
             site_settings.save()
             messages.success(request, "Site settings updated successfully!")
             return redirect('dashboard')
