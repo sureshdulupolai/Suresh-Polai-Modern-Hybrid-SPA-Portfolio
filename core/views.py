@@ -156,6 +156,7 @@ def index(request):
             'achievements': Achievement.objects.all().order_by('order', '-date'),
             'certifications': Certification.objects.all().order_by('order', '-year'),
             'site_settings': SiteSettings.get_settings(),
+            'resume': Resume.objects.order_by('-updated_at').first(),
         }
 
     # Full page load
@@ -213,14 +214,43 @@ def get_section(request, section_name):
                 categories[skill.category] = []
             categories[skill.category].append(skill)
             
+        resume_obj = Resume.objects.order_by('-updated_at').first()
+            
         return render(request, 'sections/resume.html', {
             'experiences': Experience.objects.all().order_by('order', '-start_date'),
             'categories': categories,
             'achievements': Achievement.objects.all().order_by('order', '-date'),
-            'certifications': Certification.objects.all().order_by('order', '-year')
+            'certifications': Certification.objects.all().order_by('order', '-year'),
+            'resume': resume_obj
         })
     else:
         raise Http404("Section not found")
+
+import os
+from django.http import FileResponse
+from .models import Resume, ResumeDownload
+
+def download_resume(request):
+    resume = Resume.objects.order_by('-updated_at').first()
+    if not resume or not resume.file:
+        raise Http404("Resume not found.")
+        
+    ip = request.META.get('HTTP_X_FORWARDED_FOR')
+    if ip:
+        ip = ip.split(',')[0].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+        
+    download_record, created = ResumeDownload.objects.get_or_create(
+        ip_address=ip,
+        defaults={'download_count': 1}
+    )
+    if not created:
+        download_record.download_count += 1
+        download_record.save()
+        
+    filename = f"{resume.title}.pdf" if not resume.title.lower().endswith('.pdf') else resume.title
+    return FileResponse(open(resume.file.path, 'rb'), as_attachment=True, filename=filename)
 
 import uuid
 from django.http import JsonResponse

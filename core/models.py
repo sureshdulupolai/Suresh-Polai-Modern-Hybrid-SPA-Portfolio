@@ -134,3 +134,33 @@ class SiteSettings(models.Model):
     def get_settings(cls):
         obj, created = cls.objects.get_or_create(id=1)
         return obj
+
+import os
+from django.core.validators import FileExtensionValidator
+
+class Resume(models.Model):
+    title = models.CharField(max_length=200, default="Suresh_Polai_Resume", help_text="This will be the download filename")
+    file = models.FileField(upload_to='resumes/', validators=[FileExtensionValidator(allowed_extensions=['pdf'])])
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        # Delete any existing resume to ensure only 1 is active
+        # Also delete the physical file of the old one
+        for old_resume in Resume.objects.exclude(pk=self.pk):
+            if old_resume.file:
+                if os.path.isfile(old_resume.file.path):
+                    os.remove(old_resume.file.path)
+            old_resume.delete()
+        
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Resume (Updated: {self.updated_at.strftime('%Y-%m-%d')})"
+
+class ResumeDownload(models.Model):
+    ip_address = models.GenericIPAddressField(unique=True)
+    download_count = models.IntegerField(default=1)
+    last_downloaded_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.ip_address} - {self.download_count} times"

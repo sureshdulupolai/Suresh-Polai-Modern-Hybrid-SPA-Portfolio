@@ -557,3 +557,42 @@ def certification_reorder(request):
                     pass
         messages.success(request, "Certification ordering saved successfully!")
     return redirect('admin_certification_list')
+
+from core.models import Resume, ResumeDownload
+
+@user_passes_test(is_superuser, login_url='admin_login')
+def resume_management(request):
+    current_resume = Resume.objects.order_by('-updated_at').first()
+    
+    if request.method == 'POST':
+        if 'file' in request.FILES:
+            try:
+                file = request.FILES['file']
+                title = request.POST.get('title', 'Suresh_Polai_Resume').strip()
+                if not title:
+                    title = 'Suresh_Polai_Resume'
+
+                if not file.name.lower().endswith('.pdf'):
+                    messages.error(request, "Only PDF files are allowed.")
+                else:
+                    new_resume = Resume(file=file, title=title)
+                    new_resume.save()
+                    messages.success(request, "Resume updated successfully!")
+            except Exception as e:
+                messages.error(request, f"Error uploading resume: {str(e)}")
+        else:
+            messages.error(request, "No file uploaded.")
+        return redirect('admin_resume')
+        
+    downloads = ResumeDownload.objects.all().order_by('-last_downloaded_at')
+    total_downloads = sum(d.download_count for d in downloads)
+    unique_ips = downloads.count()
+    
+    return render(request, 'custom_admin/resume_admin.html', {
+        'current_resume': current_resume,
+        'downloads': downloads,
+        'total_downloads': total_downloads,
+        'unique_ips': unique_ips,
+        'active_tab': 'admin_resume'
+    })
+

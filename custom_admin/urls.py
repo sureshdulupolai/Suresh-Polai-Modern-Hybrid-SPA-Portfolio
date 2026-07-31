@@ -53,4 +53,7 @@ urlpatterns = [
 
     # Site Settings
     path('settings/', views.site_settings_edit, name='admin_settings'),
+    
+    # Resume Management
+    path('resume/', views.resume_management, name='admin_resume'),
 ]

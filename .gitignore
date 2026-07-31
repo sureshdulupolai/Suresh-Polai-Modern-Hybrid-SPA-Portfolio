@@ -2,8 +2,8 @@
 db.sqlite3
 *.sqlite3
 
-# Media files (optional)
-media/
+# Media files (Committing media so Render has the files)
+# media/
 
 # Environment files
 .env

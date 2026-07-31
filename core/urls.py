@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('section/<str:section_name>/', views.get_section, name='get_section'),
     path('contact/submit/', views.contact_submit, name='contact_submit'),
+    path('resume/download/', views.download_resume, name='download_resume'),
 
     path('about/', views.index, name='about'),
     path('projects/', views.index, name='projects'),
